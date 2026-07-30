@@ -42,10 +42,11 @@ export async function PUT(request: NextRequest) {
   if (!walletAddress) return NextResponse.json({ error: 'Wallet authentication required.' }, { status: 401 });
 
   try {
-    const { twitter, inviteCode } = await request.json();
+    const { twitter, twitterHandle, inviteCode } = await request.json();
+    const rawTwitter = twitter !== undefined ? twitter : twitterHandle;
     let normalizedTwitter: string | null | undefined;
-    if (typeof twitter === 'string') normalizedTwitter = normalizeTwitterHandle(twitter);
-    if (twitter !== undefined && (typeof twitter !== 'string' || normalizedTwitter === null)) {
+    if (typeof rawTwitter === 'string') normalizedTwitter = normalizeTwitterHandle(rawTwitter);
+    if (rawTwitter !== undefined && (typeof rawTwitter !== 'string' || normalizedTwitter === null)) {
       return NextResponse.json({ error: 'Use @handle, handle, or an x.com/twitter.com profile URL.' }, { status: 400 });
     }
     if (inviteCode !== undefined && (typeof inviteCode !== 'string' || inviteCode.trim().length > 32)) {

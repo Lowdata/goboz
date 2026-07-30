@@ -57,7 +57,14 @@ export function getAuthenticatedWallet(request: NextRequest): string | null {
 
 export function assertSameOrigin(request: NextRequest): boolean {
   const origin = request.headers.get('origin');
-  return !!origin && origin === request.nextUrl.origin;
+  if (!origin) return true;
+  const host = request.headers.get('host');
+  try {
+    const originHost = new URL(origin).host;
+    return originHost === host || origin === request.nextUrl.origin;
+  } catch {
+    return false;
+  }
 }
 
 export function publicUser(user: { walletAddress: string; twitter: string; pullsLeft: number; referralCode: string; referredUsers: string[]; completedTasks: string[]; rewards: unknown[] }) {

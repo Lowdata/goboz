@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Forgotten Scroll</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+--pitch:#0B0906;
+--stone-dark:#1C1712;
+--stone:#332A20;
+--stone-light:#4E4029;
+--moss:#5C6B3E;
+--gold:#C9A227;
+--gold-bright:#E8C468;
+--parchment:#E7D6A6;
+--parchment-dark:#D3BD86;
+--ink:#2B2013;
+--rust:#8B4A2B;
+--wax:#6E2418;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{ height:100%; }
+body{
+background-color: var(--pitch);
+background-image:
+radial-gradient(ellipse 800px 500px at 18% 15%, rgba(92,107,62,0.06), transparent 60%),
+radial-gradient(ellipse 700px 550px at 85% 75%, rgba(201,162,39,0.07), transparent 60%),
+radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%),
+repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 92px),
+repeating-linear-gradient(90deg, rgba(0,0,0,0.12) 0 2px, transparent 2px 150px);
+color: var(--parchment);
+font-family:'IM Fell English', serif;
+overflow-x:hidden;
+position:relative;
+}
+
+.crack{ position:absolute; opacity:0.35; pointer-events:none; }
+
+.dust-layer{ position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+.mote{
+position:fixed; bottom:-10px; border-radius:50%;
+background: var(--gold-bright);
+filter: blur(0.3px);
+animation-name: floatUp;
+animation-timing-function: linear;
+animation-iteration-count: infinite;
+}
+@keyframes floatUp{
+0%{ transform: translateY(0) translateX(0); opacity:0; }
+10%{ opacity:1; }
+88%{ opacity:.55; }
+100%{ transform: translateY(-108vh) translateX(24px); opacity:0; }
+}
+
+/* ---------- stage / entrance ---------- */
+.stage{
+min-height:100vh; display:flex; align-items:center; justify-content:center;
+position:relative; z-index:1; padding:40px 20px;
+}
+.archway{
+position:relative;
+padding:80px 70px 66px;
+text-align:center;
+background:
+radial-gradient(ellipse at 50% 0%, rgba(201,162,39,0.08), transparent 65%),
+linear-gradient(180deg, var(--stone), var(--stone-dark));
+border:2px solid rgba(201,162,39,0.25);
+border-radius: 14px 14px 90px 90px / 14px 14px 130px 130px;
+box-shadow: 0 30px 60px rgba(0,0,0,0.55), inset 0 0 60px rgba(0,0,0,0.5);
+}
+.archway::before{
+content:"";
+position:absolute; inset:12px;
+border:1px solid rgba(201,162,39,0.15);
+border-radius: 10px 10px 82px 82px / 10px 10px 120px 120px;
+pointer-events:none;
+}
+.torch-flame{
+position:absolute; top:36px; width:16px; height:36px;
+background: radial-gradient(circle at 50% 25%, var(--gold-bright) 0%, var(--gold) 35%, var(--rust) 65%, transparent 75%);
+filter: blur(1.4px);
+border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+box-shadow: 0 0 20px 6px rgba(232,196,104,0.35);
+animation: flicker 2.3s ease-in-out infinite;
+}
+.torch-flame.left{ left:26px; }
+.torch-flame.right{ right:26px; animation-delay:1s; }
+@keyframes flicker{
+0%,100%{ transform: scaleY(1) scaleX(1) rotate(-1deg); opacity:1; }
+35%{ transform: scaleY(0.9) scaleX(1.05) rotate(1deg); opacity:0.85; }
+60%{ transform: scaleY(1.08) scaleX(0.95) rotate(-2deg); opacity:0.95; }
+}
+
+.eyebrow{
+font-family:'IM Fell English', serif; font-style:italic;
+letter-spacing:2px; font-size:13px; color: rgba(231,214,166,0.6);
+margin-bottom:14px; text-transform:uppercase;
+}
+.rune-btn{
+font-family:'Cinzel Decorative', serif; font-weight:700;
+letter-spacing:2px; font-size:15px;
+padding:18px 32px;
+background: linear-gradient(180deg, var(--stone-light), var(--stone-dark));
+color: var(--gold-bright);
+border:2px solid var(--gold);
+border-radius:4px;
+cursor:pointer;
+text-transform:uppercase;
+box-shadow: 0 10px 26px rgba(0,0,0,0.55), inset 0 0 20px rgba(201,162,39,0.15);
+transition: transform .22s ease, box-shadow .22s ease;
+}
+.rune-btn:hover{
+transform: translateY(-2px);
+box-shadow: 0 14px 32px rgba(0,0,0,0.6), 0 0 26px rgba(232,196,104,0.35), inset 0 0 24px rgba(201,162,39,0.25);
+}
+.rune-btn:active{ transform: translateY(0px); }
+
+/* ---------- overlay ---------- */
+.overlay{
+position:fixed; inset:0;
+background: radial-gradient(circle at 50% 40%, rgba(20,15,8,0.86), rgba(4,3,2,0.97));
+backdrop-filter: blur(3px);
+display:flex; align-items:center; justify-content:center;
+opacity:0; visibility:hidden;
+transition: opacity .35s ease;
+z-index:50; padding:24px;
+}
+.overlay.open{ opacity:1; visibility:visible; }
+
+/* ---------- scroll modal ---------- */
+.scroll-modal{
+position:relative;
+width:min(600px, 92vw);
+display:flex; flex-direction:column; align-items:center;
+filter: drop-shadow(0 26px 44px rgba(0,0,0,0.6));
+transform: scale(0.94);
+transition: transform .4s cubic-bezier(.2,.8,.3,1.2);
+}
+.overlay.open .scroll-modal{ transform: scale(1); }
+
+.rod{
+width: calc(100% + 18px);
+margin-left:-9px;
+height:26px;
+background: linear-gradient(180deg, #8a6038, #3c2714 55%, #241609);
+border-radius:14px;
+position:relative;
+z-index:2;
+box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.15), inset 0 -4px 5px rgba(0,0,0,0.45);
+}
+.rod-cap{
+position:absolute; top:50%; width:20px; height:34px; border-radius:50%;
+background: radial-gradient(circle at 35% 30%, #b98552, #4a2f18);
+transform:translateY(-50%);
+box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+.rod-cap.left{ left:-13px; }
+.rod-cap.right{ right:-13px; }
+
+.wax-seal{
+position:absolute; top:-16px; right:2px; z-index:6;
+width:42px; height:42px; border-radius:50%;
+background: radial-gradient(circle at 35% 30%, #a2392a, var(--wax) 70%, #3c1109);
+border:2px solid rgba(0,0,0,0.5);
+color: var(--gold-bright);
+font-family:'Cinzel Decorative', serif; font-size:15px;
+cursor:pointer;
+box-shadow: 0 4px 10px rgba(0,0,0,0.55), inset 0 2px 3px rgba(255,255,255,0.15);
+transition: transform .2s ease;
+}
+.wax-seal:hover{ transform: scale(1.08) rotate(-8deg); }
+
+.parchment-body{
+width:100%;
+overflow:hidden;
+max-height:0;
+opacity:0;
+transition: max-height .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease .05s;
+background:
+radial-gradient(ellipse 220px 140px at 15% 12%, rgba(139,74,43,0.18), transparent 60%),
+radial-gradient(ellipse 260px 160px at 88% 30%, rgba(139,74,43,0.14), transparent 60%),
+radial-gradient(ellipse 240px 180px at 25% 92%, rgba(139,74,43,0.16), transparent 60%),
+repeating-linear-gradient(115deg, rgba(43,32,19,0.03) 0 2px, transparent 2px 5px),
+var(--parchment);
+margin:-2px 0;
+box-shadow: inset 0 0 50px rgba(43,32,19,0.35);
+}
+.parchment-body.open{ opacity:1; }
+
+.parchment-inner{
+padding:48px 44px 40px;
+text-align:center;
+}
+.scroll-title{
+font-family:'Cinzel Decorative', serif;
+font-weight:700;
+font-size:26px;
+letter-spacing:1.5px;
+color: var(--ink);
+text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+margin-bottom:14px;
+}
+.scroll-divider{
+color: var(--rust);
+font-size:14px;
+letter-spacing:6px;
+margin: 0 auto 22px;
+opacity:0.8;
+}
+.scroll-divider::before,.scroll-divider::after{ content:"⚜"; }
+.scroll-text{
+text-align:left;
+color: var(--ink);
+font-size:17px;
+line-height:1.85;
+}
+.scroll-text p{ margin-bottom:16px; }
+.scroll-text p:first-of-type::first-letter{
+font-family:'Cinzel Decorative', serif;
+font-size:2.5em;
+float:left;
+line-height:0.8;
+padding:4px 8px 0 0;
+color: var(--rust);
+}
+.scroll-signoff{
+margin-top:24px;
+text-align:center;
+font-style:italic;
+letter-spacing:1px;
+font-size:13.5px;
+color: rgba(43,32,19,0.6);
+}
+
+@media (max-width:520px){
+.archway{ padding:64px 32px 50px; }
+.parchment-inner{ padding:40px 26px 32px; }
+.torch-flame{ top:24px; }
+}
+@media (prefers-reduced-motion: reduce){
+*{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="dust-layer" id="dustLayer"></div>
+
+<svg class="crack" style="left:6%; top:10%; width:220px;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 10 L60 70 L40 120 L90 160 L70 195" stroke="var(--gold)" stroke-width="1.5" fill="none" opacity="0.4"/>
+</svg>
+<svg class="crack" style="right:8%; bottom:8%; width:180px;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M190 190 L140 140 L155 90 L110 60 L120 15" stroke="var(--moss)" stroke-width="1.5" fill="none" opacity="0.35"/>
+</svg>
+
+<main class="stage">
+<div class="archway">
+<span class="torch-flame left"></span>
+<span class="torch-flame right"></span>
+<div class="eyebrow">a relic lies sealed within</div>
+<button class="rune-btn" id="openScrollBtn">🕯 Unroll the Scroll</button>
+</div>
+</main>
+
+<div class="overlay" id="overlay">
+<div class="scroll-modal" id="scrollModal">
+<button class="wax-seal" id="closeBtn" aria-label="Close">✕</button>
+<div class="rod rod-top"><span class="rod-cap left"></span><span class="rod-cap right"></span></div>
+<div class="parchment-body" id="parchmentBody">
+<div class="parchment-inner">
+<h2 class="scroll-title">THE FORGOTTEN RUIN</h2>
+<div class="scroll-divider"></div>
+<div class="scroll-text">
+<p>Beneath the collapsed archways, where moss has claimed the old stone and torchlight has not burned in a hundred years, this scroll waited — bound in leather, sealed in wax, untouched by looters or time.</p>
+<p>Those who broke the seal spoke of cold air rising from the floor, and of markings on the walls that were not there before.</p>
+<p>Whatever this place once was, it does not welcome visitors. It only remembers them.</p>
+</div>
+<div class="scroll-signoff">— sealed in shadow, bound in dust —</div>
+</div>
+</div>
+<div class="rod rod-bottom"><span class="rod-cap left"></span><span class="rod-cap right"></span></div>
+</div>
+</div>
+
+<script>
+(function(){
+const openBtn = document.getElementById('openScrollBtn');
+const closeBtn = document.getElementById('closeBtn');
+const overlay = document.getElementById('overlay');
+const body = document.getElementById('parchmentBody');
+const dustLayer = document.getElementById('dustLayer');
+
+function openScroll(){
+overlay.classList.add('open');
+document.body.style.overflow = 'hidden';
+requestAnimationFrame(()=>{
+body.style.maxHeight = body.scrollHeight + 'px';
+body.classList.add('open');
+});
+}
+
+function closeScroll(){
+body.style.maxHeight = '0px';
+body.classList.remove('open');
+setTimeout(()=>{
+overlay.classList.remove('open');
+document.body.style.overflow = '';
+}, 380);
+}
+
+openBtn.addEventListener('click', openScroll);
+closeBtn.addEventListener('click', closeScroll);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeScroll(); });
+document.addEventListener('keydown', (e)=>{
+if(e.key === 'Escape' && overlay.classList.contains('open')) closeScroll();
+});
+
+// ambient dust motes
+for(let i=0;i<18;i++){
+const m = document.createElement('span');
+m.className = 'mote';
+const size = (1 + Math.random()*2).toFixed(1) + 'px';
+m.style.width = size;
+m.style.height = size;
+m.style.left = (Math.random()*100).toFixed(1) + 'vw';
+m.style.animationDuration = (9 + Math.random()*10).toFixed(1) + 's';
+m.style.animationDelay = (Math.random()*10).toFixed(1) + 's';
+m.style.opacity = (0.15 + Math.random()*0.35).toFixed(2);
+dustLayer.appendChild(m);
+}
+})();
+</script>
+</body>
+</html>

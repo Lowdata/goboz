@@ -162,111 +162,133 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-stone-900 border-4 border-amber-600 rounded-2xl shadow-2xl overflow-hidden flex flex-col items-center p-6 text-center">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg flex flex-col items-center">
+        {/* Red Wax Seal Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-stone-400 hover:text-white rounded-full bg-stone-800 hover:bg-stone-700 transition-colors"
+          className="wax-seal"
+          aria-label="Close"
+          title="Close Scroll"
         >
-          <X className="w-6 h-6" />
+          ✕
         </button>
 
-        {/* Top Header Badge */}
-        <div className="flex items-center gap-2 mb-2 px-3 py-1 bg-stone-800 border border-stone-700 rounded-full">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="font-pixel text-xs text-amber-400 uppercase tracking-widest">
-            {tier.badge}
-          </span>
+        {/* Top Wooden Rod */}
+        <div className="rod rod-top">
+          <span className="rod-cap left" />
+          <span className="rod-cap right" />
         </div>
 
-        {/* Goblin Art Header */}
-        <div className="my-3">
-          <GoblinAvatar
-            variant={
-              result.tierId === 'triple_gem'
-                ? 'shaman'
-                : result.tierId === 'guaranteed_wl'
-                ? 'berserker'
-                : result.tierId === 'fcfs_raffle'
-                ? 'raider'
-                : 'default'
-            }
-            size={100}
-            className="rounded-xl mx-auto shadow-amber-500/20"
-          />
-        </div>
-
-        {/* Title */}
-        <h3 className="font-pixel text-2xl text-parchment-100 tracking-wider mb-1">
-          {tier.title}
-        </h3>
-        <p className="text-sm text-stone-300 font-sans mb-4 px-4">
-          {tier.description}
-        </p>
-
-        {/* Reeled Combo Display */}
-        <div className="w-full bg-stone-950 border-2 border-stone-800 rounded-xl p-4 mb-4">
-          <p className="font-pixel text-[10px] text-stone-400 uppercase tracking-wider mb-3">
-            YOUR LEVER COMBO:
-          </p>
-          <div className="flex items-center justify-center gap-4 sm:gap-6">
-            {result.symbols.map((sym, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col items-center bg-stone-900 border border-stone-800 rounded-lg p-2 w-20"
-              >
-                <SymbolIcon symbolId={sym} size={48} showLabel />
-              </div>
-            ))}
+        {/* Parchment Body */}
+        <div className="relative w-full bg-[#E7D6A6] border-x-4 border-[#3A2A20] p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[85vh] text-[#262320] flex flex-col items-center text-center">
+          {/* Background Dungeon Watermark */}
+          <div className="absolute right-4 bottom-4 w-40 h-40 opacity-10 pointer-events-none">
+            <img src="/skullpixel-rmbg.png" alt="" className="w-full h-full object-contain" />
           </div>
-        </div>
 
-        {/* Bonus Reward Notification */}
-        {result.bonusSpinAwarded && (
-          <div className="w-full bg-amber-500/10 border border-amber-500/40 rounded-lg py-2 px-4 mb-4 flex items-center justify-center gap-2 text-amber-300 text-xs font-pixel">
-            <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>+1 FREE LEVER SPIN AWARDED TO YOUR BALANCE!</span>
-          </div>
-        )}
-
-        {/* Share & Download Action Buttons */}
-        <div className="w-full flex flex-col sm:flex-row gap-3 mt-2">
-          <button
-            onClick={handleShareToX}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white font-pixel text-xs tracking-wider rounded-xl shadow-lg shadow-sky-500/20 active:translate-y-0.5 transition-all"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>
-              {isShareClaimed
-                ? 'SHARED (+1 BONUS PULL ADDED!)'
-                : 'SHARE TO X (+1 BONUS PULL)'}
+          {/* Top Header Badge */}
+          <div className="flex items-center gap-2 mb-3 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] border-2 border-[#3A332B] rounded-full shadow-[2px_2px_0px_0px_#3A332B]">
+            <Sparkles className="w-4 h-4 text-[#F4C567]" />
+            <span className="font-pixel text-xs text-[#ECE3C6] uppercase tracking-widest font-bold">
+              {tier.badge}
             </span>
-          </button>
+          </div>
 
-          <button
-            onClick={handleDownloadPng}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-stone-800 hover:bg-stone-700 text-parchment-200 border border-stone-700 font-pixel text-xs tracking-wider rounded-xl shadow active:translate-y-0.5 transition-all"
-          >
-            <Download className="w-4 h-4 text-amber-400" />
-            <span>DOWNLOAD CARD (PNG)</span>
-          </button>
+          {/* Goblin Art Header */}
+          <div className="my-2">
+            <GoblinAvatar
+              variant={
+                result.tierId === 'triple_gem'
+                  ? 'shaman'
+                  : result.tierId === 'guaranteed_wl'
+                  ? 'berserker'
+                  : result.tierId === 'fcfs_raffle'
+                  ? 'raider'
+                  : 'default'
+              }
+              size={90}
+              className="rounded-xl mx-auto border-2 border-[#3A332B] shadow-[4px_4px_0px_0px_#3A332B]"
+            />
+          </div>
+
+          {/* Title */}
+          <h3 className="font-heading text-2xl text-[#262320] tracking-wider mb-1 font-bold">
+            {tier.title}
+          </h3>
+          <p className="text-xs sm:text-sm text-[#3A332B] font-sans mb-4 px-4 font-medium">
+            {tier.description}
+          </p>
+
+          {/* Reeled Combo Display */}
+          <div className="w-full bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 mb-4 shadow-[4px_4px_0px_0px_#3A332B]">
+            <p className="font-pixel text-[10px] text-[#5D7C3B] uppercase tracking-wider mb-3 font-bold">
+              YOUR LEVER COMBO:
+            </p>
+            <div className="flex items-center justify-center gap-4 sm:gap-6">
+              {result.symbols.map((sym, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col items-center bg-[#EBE3CA] border-2 border-[#3A332B] rounded-lg p-2 w-20 shadow-sm"
+                >
+                  <SymbolIcon symbolId={sym} size={48} showLabel />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bonus Reward Notification */}
+          {result.bonusSpinAwarded && (
+            <div className="w-full bg-[#5D7C3B]/20 border-2 border-[#5D7C3B] rounded-lg py-2 px-4 mb-4 flex items-center justify-center gap-2 text-[#262320] text-xs font-pixel font-bold">
+              <Sparkles className="w-4 h-4 text-[#5D7C3B] animate-spin" />
+              <span>+1 FREE LEVER SPIN AWARDED TO YOUR BALANCE!</span>
+            </div>
+          )}
+
+          {/* Share & Download Action Buttons */}
+          <div className="w-full flex flex-col sm:flex-row gap-3 mt-2">
+            <button
+              onClick={handleShareToX}
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>
+                {isShareClaimed
+                  ? 'SHARED (+1 BONUS PULL ADDED!)'
+                  : 'SHARE TO X (+1 BONUS PULL)'}
+              </span>
+            </button>
+
+            <button
+              onClick={handleDownloadPng}
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
+            >
+              <Download className="w-4 h-4 text-[#262320]" />
+              <span>DOWNLOAD CARD (PNG)</span>
+            </button>
+          </div>
+
+          {isShareClaimed && (
+            <p className="mt-3 text-xs text-[#5D7C3B] font-pixel flex items-center justify-center gap-1 font-bold">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Bonus pull unlocked! Check your balance.</span>
+            </p>
+          )}
+
+          {/* Hidden Canvas for PNG rendering */}
+          <canvas ref={canvasRef} className="hidden" />
+
+          {/* Footer info */}
+          <div className="mt-4 pt-3 border-t-2 border-[#3A332B]/30 w-full flex justify-between items-center text-[11px] text-[#3A332B] font-mono font-bold">
+            <span>Looter: {result.walletAddress.substring(0, 6)}...{result.walletAddress.substring(result.walletAddress.length - 4)}</span>
+            <span>GOBBOZ #001</span>
+          </div>
         </div>
 
-        {isShareClaimed && (
-          <p className="mt-3 text-xs text-emerald-400 font-pixel flex items-center justify-center gap-1">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Bonus pull unlocked! Check your balance.</span>
-          </p>
-        )}
-
-        {/* Hidden Canvas for PNG rendering */}
-        <canvas ref={canvasRef} className="hidden" />
-
-        {/* Footer info */}
-        <div className="mt-4 pt-3 border-t border-stone-800 w-full flex justify-between items-center text-[11px] text-stone-500 font-mono">
-          <span>Looter: {result.walletAddress.substring(0, 6)}...{result.walletAddress.substring(result.walletAddress.length - 4)}</span>
-          <span>GOBBOZ #001</span>
+        {/* Bottom Wooden Rod */}
+        <div className="rod rod-bottom">
+          <span className="rod-cap left" />
+          <span className="rod-cap right" />
         </div>
       </div>
     </div>

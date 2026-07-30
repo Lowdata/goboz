@@ -3,15 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { UserState, PullResult } from '@/types/game';
 import { Navbar } from '@/components/Navbar';
-import { HeroSection } from '@/components/HeroSection';
 import { SlotMachine } from '@/components/SlotMachine';
-import { HowItWorks } from '@/components/HowItWorks';
 import { FlywheelEconomy } from '@/components/FlywheelEconomy';
-import { RewardTiers } from '@/components/RewardTiers';
-import { PullHistory } from '@/components/PullHistory';
 import { Footer } from '@/components/Footer';
 import { OnboardingModal } from '@/components/OnboardingModal';
 import { RewardTiersModal } from '@/components/RewardTiersModal';
+import { HowItWorksModal } from '@/components/HowItWorksModal';
+import { PullHistoryModal } from '@/components/PullHistoryModal';
 import { RewardCardModal } from '@/components/RewardCardModal';
 
 export default function GobbozHomePage() {
@@ -33,14 +31,12 @@ export default function GobbozHomePage() {
   const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [isRewardTiersModalOpen, setIsRewardTiersModalOpen] = useState(false);
+  const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [activeCardModalResult, setActiveCardModalResult] =
     useState<PullResult | null>(null);
 
   const [dbTasks, setDbTasks] = useState<any[]>([]);
-  const [globalStats, setGlobalStats] = useState({
-    totalPulls: 4892,
-    wlSpotsClaimed: 318
-  });
 
   // Fetch tasks from MongoDB on initial load
   useEffect(() => {
@@ -58,42 +54,83 @@ export default function GobbozHomePage() {
     fetchTasks();
   }, []);
 
-  // Check URL for referral param on initial load
+  // Fetch user state from backend if connected
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const refAddr = params.get('ref');
-      if (refAddr && !userState.completedTasks['referred_by']) {
-        console.log('Referred by goblin:', refAddr);
+    async function fetchUserState() {
+      if (!userState.isConnected || !userState.walletAddress) return;
+
+      try {
+        const res = await fetch(
+          `/api/user?wallet=${encodeURIComponent(userState.walletAddress)}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          const tasksObj: Record<string, boolean> = { ...userState.completedTasks };
+          if (Array.isArray(data.completedTasks)) {
+            data.completedTasks.forEach((t: string) => {
+              tasksObj[t] = true;
+            });
+          } else if (data.completedTasks && typeof data.completedTasks === 'object') {
+            Object.assign(tasksObj, data.completedTasks);
+          }
+
+          setUserState((prev) => ({
+            ...prev,
+            isConnected: true,
+            pullsRemaining:
+              data.pullsLeft !== undefined
+                ? data.pullsLeft
+                : prev.pullsRemaining,
+            twitter: data.twitterHandle || data.twitter || prev.twitter,
+            referralCode: data.referralCode || prev.referralCode,
+            completedTasks:
+              Object.keys(tasksObj).length > 0
+                ? tasksObj
+                : prev.completedTasks
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch user state:', err);
       }
     }
-  }, [userState.completedTasks]);
 
-  const handleOnboardingSuccess = (user: { walletAddress: string; twitter?: string; referralCode?: string; referredUsers?: string[]; pullsLeft?: number; completedTasks?: string[] }) => {
-    const tasksMap: Record<string, boolean> = {};
-    if (user.completedTasks && Array.isArray(user.completedTasks)) {
-      user.completedTasks.forEach((tid: string) => {
-        tasksMap[tid] = true;
+    fetchUserState();
+  }, [userState.isConnected, userState.walletAddress]);
+
+  const handleOnboardingSuccess = (userData: any) => {
+    const tasksObj: Record<string, boolean> = { ...userState.completedTasks };
+    if (Array.isArray(userData.completedTasks)) {
+      userData.completedTasks.forEach((t: string) => {
+        tasksObj[t] = true;
       });
+    } else if (userData.completedTasks && typeof userData.completedTasks === 'object') {
+      Object.assign(tasksObj, userData.completedTasks);
     }
-    setUserState((prev) => ({
-      ...prev,
-      isConnected: true,
-      walletAddress: user.walletAddress,
-      twitter: user.twitter || '',
-      referralCode: user.referralCode || '',
-      referredUsers: user.referredUsers || [],
-      pullsRemaining: typeof user.pullsLeft === 'number' ? user.pullsLeft : prev.pullsRemaining,
-      referralCount: user.referredUsers?.length || 0,
-      completedTasks: tasksMap
-    }));
-  };
 
-  useEffect(() => {
-    fetch('/api/user').then(async (res) => {
-      if (res.ok) handleOnboardingSuccess(await res.json());
-    }).catch(() => undefined);
-  }, []);
+    setUserState((prev) => {
+      const addr = userData.walletAddress || prev.walletAddress;
+      return {
+        ...prev,
+        isConnected: !!addr,
+        walletAddress: addr || null,
+        twitter:
+          userData.twitter !== undefined
+            ? userData.twitter
+            : userData.twitterHandle !== undefined
+            ? userData.twitterHandle
+            : prev.twitter,
+        pullsRemaining:
+          userData.pullsLeft !== undefined
+            ? userData.pullsLeft
+            : userData.pullsRemaining !== undefined
+            ? userData.pullsRemaining
+            : prev.pullsRemaining,
+        referralCode: userData.referralCode || prev.referralCode,
+        referredUsers: userData.referredUsers || prev.referredUsers,
+        completedTasks: Object.keys(tasksObj).length > 0 ? tasksObj : prev.completedTasks
+      };
+    });
+  };
 
   const handleDisconnect = () => {
     setUserState((prev) => ({
@@ -113,25 +150,21 @@ export default function GobbozHomePage() {
     }));
   };
 
-  const handlePullCompleted = (result: PullResult & { user?: { pullsLeft?: number } }) => {
+  const handlePullCompleted = (
+    result: PullResult & { user?: { pullsLeft?: number } }
+  ) => {
     setUserState((prev) => {
       const newHistory = [result, ...prev.history];
       return {
         ...prev,
-        pullsRemaining: result.user?.pullsLeft !== undefined ? result.user.pullsLeft : result.pullsRemaining,
+        pullsRemaining:
+          result.user?.pullsLeft !== undefined
+            ? result.user.pullsLeft
+            : result.pullsRemaining,
         totalPullsDone: prev.totalPullsDone + 1,
         history: newHistory
       };
     });
-
-    // Update simulated global stats
-    setGlobalStats((prev) => ({
-      totalPulls: prev.totalPulls + 1,
-      wlSpotsClaimed:
-        result.tierId === 'guaranteed_wl' || result.tierId === 'triple_gem'
-          ? prev.wlSpotsClaimed + 1
-          : prev.wlSpotsClaimed
-    }));
 
     // Open shareable result card automatically!
     setActiveCardModalResult(result);
@@ -183,14 +216,11 @@ export default function GobbozHomePage() {
   };
 
   const scrollToMachine = () => {
-    const el = document.getElementById('slot-machine-anchor');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-parchment-100 flex flex-col font-sans selection:bg-amber-500 selection:text-stone-950 overflow-x-hidden">
+    <div className="min-h-screen bg-[#ECE3C6] text-[#262320] flex flex-col font-sans selection:bg-[#5D7C3B] selection:text-[#ECE3C6] overflow-x-hidden">
       {/* Top Navbar */}
       <Navbar
         userState={userState}
@@ -200,62 +230,61 @@ export default function GobbozHomePage() {
         }}
         onDisconnect={handleDisconnect}
         onToggleSound={handleToggleSound}
+        onOpenHowItWorksModal={() => setIsHowItWorksModalOpen(true)}
         onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
-        stats={globalStats}
+        onOpenHistoryModal={() => setIsHistoryModalOpen(true)}
       />
 
-      {/* Main Content Body */}
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 pb-12">
-        {/* Hero Section */}
-        <HeroSection
-          userState={userState}
-          onOpenConnectModal={() => {
-            setOnboardingStep(1);
-            setIsOnboardingModalOpen(true);
-          }}
-          onScrollToMachine={scrollToMachine}
-          onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
-        />
+      {/* Main Content Body - Side by Side Layout */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        {/* Compact Title / Header Banner */}
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] border-2 border-[#3A332B] rounded-full mb-3 shadow-[2px_2px_0px_0px_#3A332B]">
+            <img src="/skullpixel-rmbg.png" alt="Skull" className="w-4 h-4 object-contain inline" />
+            <span className="font-pixel text-xs uppercase tracking-widest">
+              ONE-ARMED GOBLIN BANDIT
+            </span>
+          </div>
+          <h1 className="font-heading text-4xl sm:text-6xl text-[#262320] uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(58,51,43,0.15)]">
+            PULL THE LEVER. <span className="text-[#5D7C3B]">LOOT THE LIST.</span>
+          </h1>
+          <p className="font-mono text-xs sm:text-sm text-[#3A332B] mt-1 max-w-2xl mx-auto tracking-wide font-medium">
+            Every goblin&apos;s got a lever to pull and something to steal. Yours might be a whitelist spot.
+          </p>
+        </div>
 
-        <FlywheelEconomy
-          userState={userState}
-          onCompleteTask={handleCompleteTask}
-          onOpenConnectModal={() => {
-            setOnboardingStep(1);
-            setIsOnboardingModalOpen(true);
-          }}
-          tasksDB={dbTasks}
-        />
+        {/* Side-by-Side Grid: Left = Tasks / Pull Economy, Right = 3-Reel Slot Machine */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Tasks & Pull Economy */}
+          <div className="lg:col-span-5 w-full">
+            <FlywheelEconomy
+              userState={userState}
+              onCompleteTask={handleCompleteTask}
+              onOpenConnectModal={() => {
+                setOnboardingStep(1);
+                setIsOnboardingModalOpen(true);
+              }}
+              tasksDB={dbTasks}
+            />
+          </div>
 
-        {/* Anchor for scrolling to slot machine */}
-        <div id="slot-machine-anchor" className="scroll-mt-24" />
-
-        {/* Centerpiece 3-Reel Slot Machine */}
-        <SlotMachine
-          userState={userState}
-          onPullCompleted={handlePullCompleted}
-          onOpenConnectModal={() => {
-            setOnboardingStep(1);
-            setIsOnboardingModalOpen(true);
-          }}
-          onRequireTwitter={() => {
-            setOnboardingStep(2);
-            setIsOnboardingModalOpen(true);
-          }}
-          onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
-        />
-
-        {/* How It Works Strip (3-Step Strip) */}
-        <HowItWorks />
-
-        {/* Reward Tiers Section — What's in the machine */}
-        <RewardTiers />
-
-        {/* Past Pulls History */}
-        <PullHistory
-          history={userState.history}
-          onOpenCard={(res) => setActiveCardModalResult(res)}
-        />
+          {/* Right Column: Centerpiece 3-Reel Slot Machine */}
+          <div className="lg:col-span-7 w-full flex justify-center">
+            <SlotMachine
+              userState={userState}
+              onPullCompleted={handlePullCompleted}
+              onOpenConnectModal={() => {
+                setOnboardingStep(1);
+                setIsOnboardingModalOpen(true);
+              }}
+              onRequireTwitter={() => {
+                setOnboardingStep(2);
+                setIsOnboardingModalOpen(true);
+              }}
+              onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
+            />
+          </div>
+        </div>
       </main>
 
       {/* Footer CTA & Tribal Tagline */}
@@ -268,7 +297,7 @@ export default function GobbozHomePage() {
         onScrollToMachine={scrollToMachine}
       />
 
-      {/* 3-Step Onboarding Modal */}
+      {/* 3-Step Onboarding / Signup Modal */}
       <OnboardingModal
         isOpen={isOnboardingModalOpen}
         initialStep={onboardingStep}
@@ -277,10 +306,24 @@ export default function GobbozHomePage() {
         currentUser={userState.isConnected ? userState : null}
       />
 
+      {/* Parchment How It Works Modal */}
+      <HowItWorksModal
+        isOpen={isHowItWorksModalOpen}
+        onClose={() => setIsHowItWorksModalOpen(false)}
+      />
+
       {/* Parchment Reward Tiers Modal */}
       <RewardTiersModal
         isOpen={isRewardTiersModalOpen}
         onClose={() => setIsRewardTiersModalOpen(false)}
+      />
+
+      {/* Parchment Pull History Modal */}
+      <PullHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+        history={userState.history}
+        onOpenCard={(res) => setActiveCardModalResult(res)}
       />
 
       {/* Canvas Shareable Result Card Modal */}

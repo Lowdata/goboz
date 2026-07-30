@@ -57,21 +57,21 @@ export const Reel: React.FC<ReelProps> = ({
 
   return (
     <div
-      className={`relative w-28 sm:w-32 md:w-36 h-40 sm:h-44 md:h-48 bg-stone-900 border-4 rounded-lg flex flex-col items-center justify-center overflow-hidden transition-all shadow-inner ${
+      className={`relative w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 bg-[#F7F2E4] border-4 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-all shadow-[4px_4px_0px_0px_#3A332B] ${
         isLocallySpinning
-          ? 'border-amber-400/60 shadow-amber-500/20 animate-pulse'
-          : 'border-stone-700 shadow-black/60'
+          ? 'border-[#5D7C3B] bg-[#ECE3C6] animate-pulse'
+          : 'border-[#3A332B]'
       }`}
       style={{
-        background: 'linear-gradient(180deg, #18181b 0%, #27272a 50%, #18181b 100%)'
+        background: isLocallySpinning ? '#EBE3CA' : '#F7F2E4'
       }}
     >
-      {/* Top & Bottom Shadow Gradient Overlay for cylindrical reel depth */}
-      <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/80 to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/80 to-transparent z-10 pointer-events-none" />
+      {/* Top & Bottom Subtle Shadow for cylindrical reel depth */}
+      <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#3A332B]/15 to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#3A332B]/15 to-transparent z-10 pointer-events-none" />
 
       {/* Center Winning Payline Highlight Frame */}
-      <div className="absolute inset-x-2 inset-y-6 border-2 border-dashed border-amber-500/30 rounded pointer-events-none z-10" />
+      <div className="absolute inset-x-2 inset-y-6 border-2 border-dashed border-[#C49B33]/60 rounded pointer-events-none z-10" />
 
       {/* Spinning Symbol Icon */}
       <div
@@ -82,11 +82,11 @@ export const Reel: React.FC<ReelProps> = ({
         <SymbolIcon symbolId={currentSymbol} size={72} showLabel={!isLocallySpinning} />
       </div>
 
-      {/* Corner rivet screws for greasy industrial goblin feel */}
-      <div className="absolute top-1.5 left-1.5 w-2 h-2 bg-stone-700 rounded-full border border-stone-500" />
-      <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-stone-700 rounded-full border border-stone-500" />
-      <div className="absolute bottom-1.5 left-1.5 w-2 h-2 bg-stone-700 rounded-full border border-stone-500" />
-      <div className="absolute bottom-1.5 right-1.5 w-2 h-2 bg-stone-700 rounded-full border border-stone-500" />
+      {/* Corner rivet screws */}
+      <div className="absolute top-1.5 left-1.5 w-2 h-2 bg-[#3A332B] rounded-full" />
+      <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#3A332B] rounded-full" />
+      <div className="absolute bottom-1.5 left-1.5 w-2 h-2 bg-[#3A332B] rounded-full" />
+      <div className="absolute bottom-1.5 right-1.5 w-2 h-2 bg-[#3A332B] rounded-full" />
     </div>
   );
 };

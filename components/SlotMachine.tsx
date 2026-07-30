@@ -87,39 +87,25 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center my-6">
-      {/* Decorative Crown & Sword Ornament Above Machine */}
-      <div className="relative mb-4 flex items-center justify-center gap-6">
-        <img
-          src="/crownandswordimage.png"
-          alt="Gobboz Crown and Sword"
-          className="w-24 sm:w-36 h-auto object-contain drop-shadow-[0_0_25px_rgba(217,165,68,0.6)] hover:scale-105 transition-transform"
-        />
-        <img
-          src="/skull.png"
-          alt="Gobboz Skull"
-          className="w-20 sm:w-28 h-auto object-contain drop-shadow-[0_0_25px_rgba(127,168,62,0.6)] hover:scale-105 transition-transform"
-        />
-      </div>
-
+    <div className="w-full flex flex-col items-center">
       {/* Main Machine Casing */}
-      <div className="relative w-full max-w-3xl bg-gradient-to-b from-stone-800 via-stone-900 to-stone-950 border-4 sm:border-8 border-stone-700 rounded-3xl p-4 sm:p-8 shadow-2xl shadow-black/80 overflow-hidden">
+      <div className="relative w-full max-w-3xl bg-[#F7F2E4] border-4 border-[#3A332B] rounded-3xl p-4 sm:p-7 shadow-[8px_8px_0px_0px_#3A332B] overflow-hidden">
         {/* Background Dungeon Skull Watermark */}
-        <div className="absolute right-4 top-4 w-32 h-32 opacity-5 pointer-events-none">
-          <img src="/skull.png" alt="" className="w-full h-full object-contain" />
+        <div className="absolute right-4 top-4 w-32 h-32 opacity-10 pointer-events-none">
+          <img src="/skullpixel-rmbg.png" alt="" className="w-full h-full object-contain" />
         </div>
 
         {/* Decorative corner rivets */}
-        <div className="absolute top-3 left-3 w-3 h-3 bg-stone-600 rounded-full border border-stone-500 shadow" />
-        <div className="absolute top-3 right-3 w-3 h-3 bg-stone-600 rounded-full border border-stone-500 shadow" />
-        <div className="absolute bottom-3 left-3 w-3 h-3 bg-stone-600 rounded-full border border-stone-500 shadow" />
-        <div className="absolute bottom-3 right-3 w-3 h-3 bg-stone-600 rounded-full border border-stone-500 shadow" />
+        <div className="absolute top-3 left-3 w-3 h-3 bg-[#3A332B] rounded-full" />
+        <div className="absolute top-3 right-3 w-3 h-3 bg-[#3A332B] rounded-full" />
+        <div className="absolute bottom-3 left-3 w-3 h-3 bg-[#3A332B] rounded-full" />
+        <div className="absolute bottom-3 right-3 w-3 h-3 bg-[#3A332B] rounded-full" />
 
         {/* Header Marquee Banner */}
-        <div className="w-full bg-stone-950 border-2 border-stone-800 rounded-xl py-3 px-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-inner">
+        <div className="w-full bg-[#5D7C3B] text-[#ECE3C6] border-2 border-[#3A332B] rounded-xl py-3 px-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[2px_2px_0px_0px_#3A332B]">
           <div className="flex items-center gap-2">
-            <img src="/skull.png" alt="Gobboz" className="w-6 h-6 object-contain" />
-            <span className="font-heading text-xs sm:text-sm text-amber-400 tracking-wider">
+            <img src="/skullpixel-rmbg.png" alt="Gobboz Skull" className="w-6 h-6 object-contain" />
+            <span className="font-heading text-xs sm:text-sm tracking-wider font-bold">
               GOBBOZ ONE-ARMED BANDIT
             </span>
           </div>
@@ -127,15 +113,15 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             <button
               type="button"
               onClick={onOpenRewardTiersModal}
-              className="px-2.5 py-1 bg-[#5C3D22]/20 hover:bg-[#5C3D22]/40 border border-[#5C3D22]/50 rounded text-amber-400 font-heading text-[11px] uppercase tracking-wider transition-all"
+              className="px-3 py-1.5 bg-[#ECE3C6] hover:bg-[#E2D8B9] text-[#262320] border-2 border-[#3A332B] rounded-lg font-pixel text-xs tracking-wider transition-all shadow-[2px_2px_0px_0px_#262320]"
             >
               VIEW TIERS
             </button>
-            <div className="flex items-center gap-2 bg-stone-900 px-3 py-1 rounded border border-stone-700">
-              <span className="font-mono text-[11px] text-stone-400 uppercase">
+            <div className="flex items-center gap-2 bg-[#763D52] text-[#ECE3C6] px-3.5 py-1.5 rounded-lg border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#262320]">
+              <span className="font-pixel text-xs uppercase">
                 YOUR PULLS:
               </span>
-              <span className="font-heading text-sm text-amber-400">
+              <span className="font-pixel text-sm font-bold text-[#F4C567]">
                 {userState.isConnected ? userState.pullsRemaining : 0}
               </span>
             </div>
@@ -143,16 +129,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         </div>
 
         {/* Center Slot Reels + Right Lever Container */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 my-4">
+        <div className="flex flex-col xl:flex-row items-center justify-center gap-4 sm:gap-6 my-4 w-full">
           {/* Reels Display Housing */}
-          <div className="relative bg-stone-950 border-4 border-amber-600/80 rounded-2xl p-4 sm:p-6 shadow-2xl flex flex-col items-center">
+          <div className="relative bg-[#ECE3C6] border-4 border-[#3A332B] rounded-2xl p-3 sm:p-5 md:p-6 shadow-inner flex flex-col items-center w-full max-w-full">
             {/* Payline Label Banner */}
-            <div className="absolute -top-3 px-3 py-0.5 bg-amber-500 text-stone-950 font-pixel text-[10px] rounded shadow-md uppercase tracking-wider">
+            <div className="absolute -top-3.5 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] font-pixel text-[10px] rounded-lg border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#3A332B] uppercase tracking-wider">
               WINNING COMBOS PAY OUT
             </div>
 
             {/* 3 Reels with ~0.4s sequential stop delay for suspense */}
-            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mt-2 w-full">
               <Reel
                 reelIndex={0}
                 finalSymbolId={targetSymbols[0]}
@@ -177,17 +163,17 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             {/* Glowing Payline Indicator LEDs */}
             <div className="w-full flex justify-between items-center mt-4 px-2">
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="w-2 h-2 rounded-full bg-sky-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#5D7C3B] border border-[#3A332B]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#C49B33] border border-[#3A332B]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#763D52] border border-[#3A332B]" />
               </div>
-              <span className="font-pixel text-[10px] text-stone-400">
+              <span className="font-pixel text-[10px] text-[#262320] font-bold">
                 MATCH 3x OR 2x TO LOOT
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-sky-500" />
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#763D52] border border-[#3A332B]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#C49B33] border border-[#3A332B]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#5D7C3B] border border-[#3A332B]" />
               </div>
             </div>
           </div>

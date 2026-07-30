@@ -69,76 +69,52 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
   };
 
   return (
-    <section className="w-full max-w-5xl mx-auto my-12 px-4">
-      {/* Section Header */}
-      <div className="text-center mb-8">
-        <div className="banner banner--plum">
-          <span className="skull">💀</span> PULL ECONOMY
-        </div>
-        <p className="font-mono text-xs text-parchment-dim uppercase tracking-widest mt-1">
-          More pulls, more loot.
-        </p>
-      </div>
-
-      {/* Pull economy rules */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
+    <section className="w-full flex flex-col gap-6">
+      {/* Pull economy rules cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 flex flex-col justify-between shadow-[4px_4px_0px_0px_#3A332B] transition-all">
           <div>
-            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
+            <span className="font-pixel text-xs text-[#5D7C3B] font-bold uppercase tracking-wider block mb-1">
               CONNECT WALLET
             </span>
-            <p className="text-xs text-stone-300 font-sans">
-              Every goblin starts with one free pull after connecting a wallet.
+            <p className="text-xs text-[#262320] font-sans">
+              1 free pull on wallet connect.
             </p>
           </div>
-          <div className="mt-3 pt-2 border-t border-stone-800">
-            <span className="font-pixel text-sm text-emerald-400">+1 FREE PULL</span>
+          <div className="mt-3 pt-2 border-t border-[#3A332B]/20">
+            <span className="font-pixel text-sm text-[#5D7C3B] font-bold">+1 FREE PULL</span>
           </div>
         </div>
-        <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
+        <div className="bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 flex flex-col justify-between shadow-[4px_4px_0px_0px_#3A332B] transition-all">
           <div>
-            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
+            <span className="font-pixel text-xs text-[#763D52] font-bold uppercase tracking-wider block mb-1">
               REFER A FRIEND
             </span>
-            <p className="text-xs text-stone-300 font-sans">
-              Share your custom link. Every friend who connects awards both of you.
+            <p className="text-xs text-[#262320] font-sans">
+              +2 pull on referral that connects a new wallet.
             </p>
           </div>
-          <div className="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between">
-            <span className="font-pixel text-sm text-emerald-400">+2 PULLS</span>
+          <div className="mt-3 pt-2 border-t border-[#3A332B]/20 flex items-center justify-between">
+            <span className="font-pixel text-sm text-[#763D52] font-bold">+2 PULLS</span>
             <button
               onClick={handleCopyReferral}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-parchment-200 rounded text-[11px] font-pixel transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-[#ECE3C6] hover:bg-[#E2D8B9] text-[#262320] border border-[#3A332B] rounded text-[10px] font-pixel shadow-[1px_1px_0px_0px_#3A332B] transition-all"
             >
-              <Copy className="w-3.5 h-3.5 text-amber-400" />
+              <Copy className="w-3.5 h-3.5 text-[#5D7C3B]" />
               <span>{copiedRef ? 'COPIED!' : userState.referralCode ? `CODE: ${userState.referralCode}` : 'COPY LINK'}</span>
             </button>
-          </div>
-        </div>
-
-        <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
-          <div>
-            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
-              SOCIAL TASKS
-            </span>
-            <p className="text-xs text-stone-300 font-sans">
-              Follow, like, and repost to keep the lever stocked with pulls.
-            </p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-stone-800">
-            <span className="font-pixel text-sm text-emerald-400">+1 PULL PER TASK</span>
           </div>
         </div>
       </div>
 
       {/* Interactive Flywheel Tasks Table */}
-      <div className="bg-stone-900/80 border-2 border-stone-800 rounded-2xl p-4 sm:p-6 shadow-xl">
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-stone-800">
-          <h3 className="font-pixel text-sm text-parchment-200 tracking-wider">
-            EARN MORE PULLS (INTERACTIVE TASKS)
+      <div className="bg-[#F7F2E4] border-2 border-[#3A332B] rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0px_0px_#3A332B]">
+        <div className="bg-[#763D52] text-[#ECE3C6] px-3.5 py-2.5 rounded-xl border-2 border-[#3A332B] mb-4 flex items-center justify-between shadow-[2px_2px_0px_0px_#3A332B]">
+          <h3 className="font-pixel text-xs sm:text-sm tracking-wider">
+            💀 EARN MORE PULLS (INTERACTIVE TASKS)
           </h3>
-          <span className="font-pixel text-xs text-stone-400">
-            CLICK ANY TASK TO COMPLETE
+          <span className="font-pixel text-[10px] text-[#ECE3C6]/90 hidden sm:inline">
+            CLICK TO COMPLETE
           </span>
         </div>
 
@@ -150,18 +126,18 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
               <div
                 key={task.id}
                 onClick={() => handleTaskClick(task)}
-                className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
                   isCompleted
-                    ? 'bg-stone-950/60 border-stone-800/80 opacity-75'
-                    : 'bg-stone-900 border-stone-700 hover:border-amber-500/50 hover:bg-stone-850 shadow'
+                    ? 'bg-[#5D7C3B]/20 border-[#5D7C3B] opacity-85'
+                    : 'bg-[#ECE3C6] hover:bg-[#E2D8B9] border-[#3A332B] shadow-[2px_2px_0px_0px_#3A332B]'
                 }`}
               >
                 <div className="flex items-start sm:items-center gap-3">
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border border-[#3A332B] ${
                       isCompleted
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-amber-500/20 text-amber-400'
+                        ? 'bg-[#5D7C3B] text-[#ECE3C6]'
+                        : 'bg-[#C49B33] text-[#262320]'
                     }`}
                   >
                     {isCompleted ? (
@@ -172,14 +148,14 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-pixel text-xs sm:text-sm text-parchment-100">
+                      <h4 className="font-pixel text-xs sm:text-sm text-[#262320] font-bold">
                         {task.title}
                       </h4>
                       {task.link && (
-                        <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
+                        <ExternalLink className="w-3.5 h-3.5 text-[#5D7C3B]" />
                       )}
                     </div>
-                    <p className="text-xs text-stone-400 font-sans mt-0.5">
+                    <p className="text-xs text-[#3A332B] font-sans mt-0.5">
                       {task.subtitle}
                     </p>
                   </div>
@@ -187,10 +163,10 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
 
                 <div className="flex items-center justify-end gap-3 mt-2 sm:mt-0">
                   <span
-                    className={`font-pixel text-xs px-2.5 py-1 rounded ${
+                    className={`font-pixel text-xs px-2.5 py-1 rounded border ${
                       isCompleted
-                        ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                        : 'bg-amber-950 text-amber-400 border border-amber-800'
+                        ? 'bg-[#5D7C3B]/20 text-[#5D7C3B] font-bold border-[#5D7C3B]'
+                        : 'bg-[#763D52]/20 text-[#763D52] font-bold border-[#763D52]'
                     }`}
                   >
                     {task.rewardText}
@@ -198,10 +174,10 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
 
                   <button
                     disabled={isCompleted || isCompleting}
-                    className={`px-3 py-1.5 rounded font-pixel text-xs tracking-wider transition-colors ${
+                    className={`px-3.5 py-1.5 rounded-lg font-pixel text-xs tracking-wider border-2 border-[#3A332B] transition-all ${
                       isCompleted
-                        ? 'bg-stone-800 text-stone-500 cursor-default'
-                        : 'bg-amber-500 hover:bg-amber-400 text-stone-950 shadow-sm'
+                        ? 'bg-[#ECE3C6] text-[#3A332B] cursor-default opacity-60'
+                        : 'bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] shadow-[2px_2px_0px_0px_#262320]'
                     }`}
                   >
                     {isCompleted ? 'COMPLETED' : isCompleting ? 'MARKING IN 5S...' : 'CLAIM PULL'}

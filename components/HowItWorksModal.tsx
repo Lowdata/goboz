@@ -1,25 +1,33 @@
-'use client';
-
 import React from 'react';
-import { X } from 'lucide-react';
-import { OUTCOME_TIERS } from '@/utils/constants';
+import { Wallet, PlayCircle, Trophy, X } from 'lucide-react';
 
-interface RewardTiersModalProps {
+interface HowItWorksModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
-  isOpen,
-  onClose
-}) => {
+export const HowItWorksModal: React.FC<HowItWorksModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
-  const tiers = [
-    OUTCOME_TIERS.guaranteed_wl,
-    OUTCOME_TIERS.triple_gem,
-    OUTCOME_TIERS.fcfs_raffle,
-    OUTCOME_TIERS.no_match
+  const steps = [
+    {
+      step: '01',
+      title: 'CONNECT',
+      description: 'Link your wallet. 1 free pull on wallet connect.',
+      icon: <Wallet className="w-8 h-8 text-[#5C3D22]" />
+    },
+    {
+      step: '02',
+      title: 'PULL',
+      description: 'Yank the lever. Watch the reels land.',
+      icon: <PlayCircle className="w-8 h-8 text-[#5C3D22]" />
+    },
+    {
+      step: '03',
+      title: 'LOOT',
+      description: 'Match symbols, claim your tier — WL, raffle entry, or the big one.',
+      icon: <Trophy className="w-8 h-8 text-[#5C3D22]" />
+    }
   ];
 
   return (
@@ -55,10 +63,10 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
               <img src="/skullpixel-rmbg.png" alt="Gobboz Skull" className="w-10 h-10 object-contain drop-shadow" />
               <div>
                 <h2 className="font-heading text-xl sm:text-3xl text-[#262320] tracking-wider font-bold">
-                  CAVERN REWARD TIERS
+                  HOW IT WORKS
                 </h2>
                 <p className="font-mono text-xs sm:text-sm text-[#8B4A2B] uppercase tracking-widest font-bold">
-                  WHAT DA MACHINE HOLDS FOR DA TRIBE
+                  THREE STEPS TO TRIBAL GLORY
                 </p>
               </div>
             </div>
@@ -66,36 +74,28 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
 
           <div className="scroll-divider" />
 
-          {/* Reward Cards List */}
+          {/* Steps List */}
           <div className="space-y-4">
-            {tiers.map((tier) => (
+            {steps.map((item) => (
               <div
-                key={tier.id}
-                className="p-5 bg-[#3A332B]/5 border-2 border-[#3A332B]/30 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm relative overflow-hidden group hover:border-[#5D7C3B] transition-all"
+                key={item.step}
+                className="p-5 bg-[#3A332B]/5 border-2 border-[#3A332B]/30 rounded-2xl flex items-center justify-between gap-4 shadow-sm relative overflow-hidden group hover:border-[#5D7C3B] transition-all"
               >
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{tier.emoji}</span>
+                <div className="flex items-center gap-4">
+                  <div className="font-pixel text-3xl text-[#8B4A2B] font-bold w-12 text-center">
+                    {item.step}
+                  </div>
+                  <div>
                     <h3 className="font-heading text-lg sm:text-xl text-[#262320] tracking-wide font-bold">
-                      {tier.title}
+                      {item.title}
                     </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#3A332B] leading-relaxed font-medium">
+                      {item.description}
+                    </p>
                   </div>
-                  <p className="font-sans text-xs sm:text-sm text-[#3A332B] leading-relaxed font-medium">
-                    {tier.description}
-                  </p>
                 </div>
-
-                {/* Symbol Example Badge */}
-                <div className="flex sm:flex-col items-center justify-center gap-2 px-4 py-3 bg-[#3A332B]/10 rounded-xl border border-[#3A332B]/20">
-                  <div className="font-mono text-xs font-bold text-[#8B4A2B] uppercase tracking-wider">
-                    EXAMPLE PULL
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xl">
-                    {tier.id === 'guaranteed_wl' && '🍄 🍄 🍄'}
-                    {tier.id === 'triple_gem' && '💎 💎 💎'}
-                    {tier.id === 'fcfs_raffle' && '🪙 🪙 🗡️'}
-                    {tier.id === 'no_match' && '🪙 🍄 💀'}
-                  </div>
+                <div className="p-3 bg-[#3A332B]/10 rounded-xl border border-[#3A332B]/20 hidden sm:block">
+                  {item.icon}
                 </div>
               </div>
             ))}
@@ -112,7 +112,7 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
               onClick={onClose}
               className="px-6 py-2.5 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] font-pixel text-xs tracking-widest rounded-xl transition-all shadow-[4px_4px_0px_0px_#262320] border-2 border-[#3A332B]"
             >
-              CLOSE PARCHMENT
+              GOT IT — LET&apos;S PULL
             </button>
           </div>
         </div>

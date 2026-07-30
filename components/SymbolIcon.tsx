@@ -144,7 +144,7 @@ export const SymbolIcon: React.FC<SymbolIconProps> = ({
         {getIconSvg(symbolId)}
       </div>
       {showLabel && (
-        <span className="mt-1.5 text-[10px] font-pixel tracking-wider text-parchment-200 uppercase text-center truncate w-full">
+        <span className="mt-1.5 text-[10px] font-pixel tracking-wider text-[#262320] font-bold uppercase text-center truncate w-full">
           {getSymbolName(symbolId)}
         </span>
       )}

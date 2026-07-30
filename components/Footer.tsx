@@ -17,6 +17,15 @@ export const Footer: React.FC<FooterProps> = ({
     <footer className="w-full bg-stone-950 border-t-4 border-stone-800 text-stone-300 mt-20">
       {/* Big Hero Footer CTA Box */}
       <div className="max-w-5xl mx-auto px-4 py-16 text-center">
+        {/* Bigger Crown and Sword Artwork in Footer */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="/crownandswordimage.png"
+            alt="Gobboz Crown and Sword"
+            className="w-36 sm:w-48 h-auto object-contain drop-shadow-[0_0_30px_rgba(217,165,68,0.6)] hover:scale-105 transition-transform"
+          />
+        </div>
+
         <div className="inline-flex items-center gap-2 px-4 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full mb-4">
           <Sparkles className="w-4 h-4 text-amber-400" />
           <span className="font-mono text-xs text-amber-400 tracking-wider">
@@ -54,8 +63,8 @@ export const Footer: React.FC<FooterProps> = ({
       {/* Tribal Bottom Strip */}
       <div className="w-full bg-stone-900 border-t border-stone-800 py-6 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Skull className="w-5 h-5 text-amber-500" />
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">💀</span>
             <span className="font-logo text-sm text-parchment-200 tracking-wider">
               GIB SHINY. KRUMP HUMIES. JOIN DA TRIBE. 💀
             </span>

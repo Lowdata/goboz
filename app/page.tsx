@@ -7,17 +7,20 @@ import { HeroSection } from '@/components/HeroSection';
 import { SlotMachine } from '@/components/SlotMachine';
 import { HowItWorks } from '@/components/HowItWorks';
 import { FlywheelEconomy } from '@/components/FlywheelEconomy';
-import { RewardTiers } from '@/components/RewardTiers';
 import { LoreAndSneakPeeks } from '@/components/LoreAndSneakPeeks';
 import { PullHistory } from '@/components/PullHistory';
 import { Footer } from '@/components/Footer';
-import { WalletConnectModal } from '@/components/WalletConnectModal';
+import { OnboardingModal } from '@/components/OnboardingModal';
+import { RewardTiersModal } from '@/components/RewardTiersModal';
 import { RewardCardModal } from '@/components/RewardCardModal';
 
 export default function GobbozHomePage() {
   const [userState, setUserState] = useState<UserState>({
     isConnected: false,
     walletAddress: null,
+    twitter: '',
+    referralCode: '',
+    referredUsers: [],
     pullsRemaining: 100, // Default 100 pulls for testing
     pityCounter: 0,
     totalPullsDone: 0,
@@ -28,14 +31,33 @@ export default function GobbozHomePage() {
     soundEnabled: true
   });
 
-  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(1);
+  const [isRewardTiersModalOpen, setIsRewardTiersModalOpen] = useState(false);
   const [activeCardModalResult, setActiveCardModalResult] =
     useState<PullResult | null>(null);
 
+  const [dbTasks, setDbTasks] = useState<any[]>([]);
   const [globalStats, setGlobalStats] = useState({
     totalPulls: 4892,
     wlSpotsClaimed: 318
   });
+
+  // Fetch tasks from MongoDB on initial load
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const res = await fetch('/api/tasks');
+        if (res.ok) {
+          const data = await res.json();
+          setDbTasks(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch tasks:', err);
+      }
+    }
+    fetchTasks();
+  }, []);
 
   // Check URL for referral param on initial load
   useEffect(() => {
@@ -48,31 +70,35 @@ export default function GobbozHomePage() {
     }
   }, [userState.completedTasks]);
 
-  const handleConnectWallet = (address: string) => {
-    setUserState((prev) => {
-      const isFirstConnect = !prev.completedTasks['connect_wallet'];
-      const newPulls = isFirstConnect
-        ? prev.pullsRemaining + 100
-        : Math.max(prev.pullsRemaining, 100);
-
-      return {
-        ...prev,
-        isConnected: true,
-        walletAddress: address,
-        pullsRemaining: newPulls,
-        completedTasks: {
-          ...prev.completedTasks,
-          connect_wallet: true
-        }
-      };
-    });
+  const handleOnboardingSuccess = (user: any) => {
+    const tasksMap: Record<string, boolean> = {};
+    if (user.completedTasks && Array.isArray(user.completedTasks)) {
+      user.completedTasks.forEach((tid: string) => {
+        tasksMap[tid] = true;
+      });
+    }
+    setUserState((prev) => ({
+      ...prev,
+      isConnected: true,
+      walletAddress: user.walletAddress,
+      twitter: user.twitter || '',
+      referralCode: user.referralCode || '',
+      referredUsers: user.referredUsers || [],
+      pullsRemaining: typeof user.pullsLeft === 'number' ? user.pullsLeft : prev.pullsRemaining,
+      pityCounter: user.pityCounter || 0,
+      referralCount: user.referredUsers?.length || 0,
+      completedTasks: tasksMap
+    }));
   };
 
   const handleDisconnect = () => {
     setUserState((prev) => ({
       ...prev,
       isConnected: false,
-      walletAddress: null
+      walletAddress: null,
+      twitter: '',
+      referralCode: '',
+      referredUsers: []
     }));
   };
 
@@ -83,13 +109,13 @@ export default function GobbozHomePage() {
     }));
   };
 
-  const handlePullCompleted = (result: PullResult) => {
+  const handlePullCompleted = (result: PullResult & { user?: any }) => {
     setUserState((prev) => {
       const newHistory = [result, ...prev.history];
       return {
         ...prev,
-        pullsRemaining: result.pullsRemaining,
-        pityCounter: result.pityCounter,
+        pullsRemaining: result.user?.pullsLeft !== undefined ? result.user.pullsLeft : result.pullsRemaining,
+        pityCounter: result.user?.pityCounter !== undefined ? result.user.pityCounter : result.pityCounter,
         totalPullsDone: prev.totalPullsDone + 1,
         history: newHistory
       };
@@ -108,15 +134,45 @@ export default function GobbozHomePage() {
     setActiveCardModalResult(result);
   };
 
-  const handleCompleteTask = (taskId: string, rewardPulls: number) => {
-    setUserState((prev) => ({
-      ...prev,
-      pullsRemaining: prev.pullsRemaining + rewardPulls,
-      completedTasks: {
-        ...prev.completedTasks,
-        [taskId]: true
+  const handleCompleteTask = async (taskId: string, rewardPulls: number) => {
+    if (!userState.isConnected || !userState.walletAddress) {
+      setOnboardingStep(1);
+      setIsOnboardingModalOpen(true);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/tasks/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: userState.walletAddress,
+          taskId
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUserState((prev) => ({
+          ...prev,
+          pullsRemaining:
+            data.user?.pullsLeft !== undefined
+              ? data.user.pullsLeft
+              : data.pullsLeft !== undefined
+                ? data.pullsLeft
+                : prev.pullsRemaining + rewardPulls,
+          completedTasks: {
+            ...prev.completedTasks,
+            [taskId]: true
+          }
+        }));
+      } else {
+        const err = await res.json();
+        console.error('Failed to complete task:', err);
       }
-    }));
+    } catch (err) {
+      console.error('Error completing task:', err);
+    }
   };
 
   const handleShareBonusClaimed = () => {
@@ -143,9 +199,13 @@ export default function GobbozHomePage() {
       {/* Top Navbar */}
       <Navbar
         userState={userState}
-        onOpenConnectModal={() => setIsConnectModalOpen(true)}
+        onOpenConnectModal={() => {
+          setOnboardingStep(1);
+          setIsOnboardingModalOpen(true);
+        }}
         onDisconnect={handleDisconnect}
         onToggleSound={handleToggleSound}
+        onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
         stats={globalStats}
       />
 
@@ -154,8 +214,12 @@ export default function GobbozHomePage() {
         {/* Hero Section */}
         <HeroSection
           userState={userState}
-          onOpenConnectModal={() => setIsConnectModalOpen(true)}
+          onOpenConnectModal={() => {
+            setOnboardingStep(1);
+            setIsOnboardingModalOpen(true);
+          }}
           onScrollToMachine={scrollToMachine}
+          onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
         />
 
         {/* Anchor for scrolling to slot machine */}
@@ -165,7 +229,15 @@ export default function GobbozHomePage() {
         <SlotMachine
           userState={userState}
           onPullCompleted={handlePullCompleted}
-          onOpenConnectModal={() => setIsConnectModalOpen(true)}
+          onOpenConnectModal={() => {
+            setOnboardingStep(1);
+            setIsOnboardingModalOpen(true);
+          }}
+          onRequireTwitter={() => {
+            setOnboardingStep(2);
+            setIsOnboardingModalOpen(true);
+          }}
+          onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
         />
 
         {/* How It Works Strip (3-Step Strip) */}
@@ -175,14 +247,12 @@ export default function GobbozHomePage() {
         <FlywheelEconomy
           userState={userState}
           onCompleteTask={handleCompleteTask}
-          onOpenConnectModal={() => setIsConnectModalOpen(true)}
+          onOpenConnectModal={() => {
+            setOnboardingStep(1);
+            setIsOnboardingModalOpen(true);
+          }}
+          tasksDB={dbTasks}
         />
-
-        {/* Anchor for Reward Tiers */}
-        <div id="rewards" className="scroll-mt-24" />
-
-        {/* Reward Tiers Section (What's in the machine) */}
-        <RewardTiers />
 
         {/* Gobboz Lore, Sneak Peeks & Raffle Details */}
         <LoreAndSneakPeeks />
@@ -197,15 +267,25 @@ export default function GobbozHomePage() {
       {/* Footer CTA & Tribal Tagline */}
       <Footer
         userState={userState}
-        onOpenConnectModal={() => setIsConnectModalOpen(true)}
+        onOpenConnectModal={() => {
+          setOnboardingStep(1);
+          setIsOnboardingModalOpen(true);
+        }}
         onScrollToMachine={scrollToMachine}
       />
 
-      {/* Wallet Connect Modal */}
-      <WalletConnectModal
-        isOpen={isConnectModalOpen}
-        onClose={() => setIsConnectModalOpen(false)}
-        onConnect={handleConnectWallet}
+      {/* 3-Step Onboarding Modal */}
+      <OnboardingModal
+        isOpen={isOnboardingModalOpen}
+        initialStep={onboardingStep}
+        onClose={() => setIsOnboardingModalOpen(false)}
+        onSuccess={handleOnboardingSuccess}
+      />
+
+      {/* Parchment Reward Tiers Modal */}
+      <RewardTiersModal
+        isOpen={isRewardTiersModalOpen}
+        onClose={() => setIsRewardTiersModalOpen(false)}
       />
 
       {/* Canvas Shareable Result Card Modal */}

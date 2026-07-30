@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { SymbolId, OutcomeTierId, PullResult } from '@/types/game';
 import { PITY_THRESHOLD } from '@/utils/constants';
+import { connectDB } from '@/lib/db';
+import { User } from '@/models/User';
 
 const ALL_SYMBOLS: SymbolId[] = [
   'gold_coin',
@@ -30,7 +32,7 @@ function getRandomItem<T>(arr: T[]): T {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { walletAddress, pullCount = 1, pityCounter = 0 } = body;
+    const { walletAddress } = body;
 
     if (!walletAddress) {
       return NextResponse.json(
@@ -39,14 +41,37 @@ export async function POST(request: Request) {
       );
     }
 
-    if (pullCount <= 0) {
+    await connectDB();
+
+    const normalizedAddress = walletAddress.toLowerCase().trim();
+    const user = await User.findOne({ walletAddress: normalizedAddress });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found. Please connect your wallet first.' },
+        { status: 404 }
+      );
+    }
+
+    // REQUIREMENT: user CAN NOT USE THE SLOT MACHINE UNTILL TWITTER IS PROVIDED
+    if (!user.twitter || user.twitter.trim() === '') {
+      return NextResponse.json(
+        {
+          error: 'TWITTER_REQUIRED',
+          message: 'You must link your Twitter handle before pulling the lever!'
+        },
+        { status: 403 }
+      );
+    }
+
+    if (user.pullsLeft <= 0) {
       return NextResponse.json(
         { error: 'No pulls remaining! Complete tasks or refer friends to loot again.' },
         { status: 400 }
       );
     }
 
-    // Determine if this pull is a guaranteed hit due to bad luck protection
+    const pityCounter = user.pityCounter || 0;
     const isGuaranteedHit = pityCounter >= PITY_THRESHOLD;
 
     let tierId: OutcomeTierId = 'no_match';
@@ -85,7 +110,6 @@ export async function POST(request: Request) {
         const pairSym = getRandomItem(ALL_SYMBOLS);
         const otherSymbols = ALL_SYMBOLS.filter((s) => s !== pairSym);
         const thirdSym = getRandomItem(otherSymbols);
-        // Randomize position of non-matching symbol for visual variety
         const pos = Math.floor(Math.random() * 3);
         const result: [SymbolId, SymbolId, SymbolId] = [pairSym, pairSym, pairSym];
         result[pos] = thirdSym;
@@ -107,19 +131,17 @@ export async function POST(request: Request) {
       }
     }
 
-    // Determine new pity counter
     let newPityCounter = pityCounter;
     if (tierId === 'no_match') {
       newPityCounter = pityCounter + 1;
     } else {
-      newPityCounter = 0; // reset pity on any match
+      newPityCounter = 0;
     }
 
-    // Calculate remaining pulls
-    let newPullsRemaining = pullCount - 1;
+    let newPullsRemaining = user.pullsLeft - 1;
     let bonusSpinAwarded = false;
     if (tierId === 'triple_gem') {
-      newPullsRemaining += 1; // +1 free lever spin on Triple Gem
+      newPullsRemaining += 1;
       bonusSpinAwarded = true;
     }
 
@@ -130,20 +152,39 @@ export async function POST(request: Request) {
       no_match: 'No match'
     };
 
+    const timestamp = new Date().toISOString();
+    const pullId = `pull-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
     const pullResult: PullResult = {
-      id: `pull-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      id: pullId,
       symbols,
       tierId,
       tierName: tierNameMap[tierId],
-      timestamp: new Date().toISOString(),
-      walletAddress,
+      timestamp,
+      walletAddress: user.walletAddress,
       pullsRemaining: newPullsRemaining,
       pityCounter: newPityCounter,
       isGuaranteedHit,
       bonusSpinAwarded
     };
 
-    return NextResponse.json(pullResult);
+    // Update user in MongoDB
+    user.pullsLeft = newPullsRemaining;
+    user.pityCounter = newPityCounter;
+    user.rewards.push({
+      pullId,
+      tierId,
+      tierName: tierNameMap[tierId],
+      symbols,
+      timestamp
+    });
+
+    await user.save();
+
+    return NextResponse.json({
+      ...pullResult,
+      user
+    });
   } catch (error) {
     console.error('Error resolving pull:', error);
     return NextResponse.json(

@@ -8,17 +8,20 @@ interface FlywheelEconomyProps {
   userState: UserState;
   onCompleteTask: (taskId: string, rewardPulls: number) => void;
   onOpenConnectModal: () => void;
+  tasksDB?: TaskItem[];
 }
 
 export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
   userState,
   onCompleteTask,
-  onOpenConnectModal
+  onOpenConnectModal,
+  tasksDB
 }) => {
   const [copiedRef, setCopiedRef] = useState(false);
-  const [tasks, setTasks] = useState<TaskItem[]>(INITIAL_TASKS);
+  const tasks = tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS;
 
-  const handleTaskClick = (task: TaskItem) => {
+  const handleTaskClick = (task?: TaskItem) => {
+    if (!task) return;
     if (!userState.isConnected) {
       onOpenConnectModal();
       return;
@@ -32,10 +35,16 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
 
     sound.playCoin();
     onCompleteTask(task.id, task.rewardPulls);
+  };
 
-    setTasks((prev) =>
-      prev.map((t) => (t.id === task.id ? { ...t, isCompleted: true } : t))
-    );
+  const handleDailyClaim = () => {
+    if (!userState.isConnected) {
+      onOpenConnectModal();
+      return;
+    }
+    if (userState.completedTasks['daily_claim']) return;
+    sound.playCoin();
+    onCompleteTask('daily_claim', 1);
   };
 
   const handleCopyReferral = () => {
@@ -43,7 +52,8 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
       onOpenConnectModal();
       return;
     }
-    const refLink = `${window.location.origin}/?ref=${userState.walletAddress}`;
+    const refCode = userState.referralCode || userState.walletAddress;
+    const refLink = `${window.location.origin}/?ref=${refCode}`;
     navigator.clipboard.writeText(refLink);
     setCopiedRef(true);
     sound.playCoin();
@@ -86,7 +96,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
               className="flex items-center gap-1.5 px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-parchment-200 rounded text-[11px] font-pixel transition-colors"
             >
               <Copy className="w-3.5 h-3.5 text-amber-400" />
-              <span>{copiedRef ? 'COPIED!' : 'COPY LINK'}</span>
+              <span>{copiedRef ? 'COPIED!' : userState.referralCode ? `CODE: ${userState.referralCode}` : 'COPY LINK'}</span>
             </button>
           </div>
         </div>
@@ -103,7 +113,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
           <div className="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between">
             <span className="font-pixel text-sm text-emerald-400">+1 PULL</span>
             <button
-              onClick={() => handleTaskClick(tasks.find((t) => t.id === 'daily_claim')!)}
+              onClick={handleDailyClaim}
               disabled={!!userState.completedTasks['daily_claim']}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-pixel transition-colors ${
                 userState.completedTasks['daily_claim']

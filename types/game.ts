@@ -65,6 +65,9 @@ export interface TaskItem {
 export interface UserState {
   isConnected: boolean;
   walletAddress: string | null;
+  twitter?: string;
+  referralCode?: string;
+  referredUsers?: string[];
   pullsRemaining: number;
   pityCounter: number;
   totalPullsDone: number;

@@ -26,8 +26,8 @@ export const HowItWorks: React.FC = () => {
   return (
     <section className="w-full max-w-5xl mx-auto my-12 px-4">
       <div className="text-center mb-8">
-        <div className="banner banner--green">
-          <span className="skull">💀</span> HOW IT WORKS
+        <div className="banner banner--green flex items-center justify-center gap-2">
+          <img src="/SKULL.png" alt="" className="w-5 h-5 object-contain" /> HOW IT WORKS
         </div>
         <p className="font-mono text-xs text-parchment-dim uppercase tracking-widest mt-1">
           THREE STEPS TO TRIBAL GLORY

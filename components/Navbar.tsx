@@ -8,6 +8,7 @@ interface NavbarProps {
   onOpenConnectModal: () => void;
   onDisconnect: () => void;
   onToggleSound: () => void;
+  onOpenRewardTiersModal?: () => void;
   stats: { totalPulls: number; wlSpotsClaimed: number };
 }
 
@@ -16,6 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenConnectModal,
   onDisconnect,
   onToggleSound,
+  onOpenRewardTiersModal,
   stats
 }) => {
   const handleSoundToggle = () => {
@@ -49,24 +51,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div className="w-1 h-3 bg-stone-700" />
           <div className="flex items-center gap-1.5">
-            <Trophy className="w-3.5 h-3.5 text-emerald-400" />
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-parchment-200">{stats.wlSpotsClaimed.toLocaleString()}</span>
-            <span>WL spots claimed</span>
+            <span>WL spots looted</span>
           </div>
         </div>
 
-        {/* Action Buttons: Sound & Wallet */}
-        <div className="flex items-center gap-3">
-          {/* Sound Toggle Button */}
+        {/* Right Controls */}
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          {/* View Reward Tiers Button */}
+          <button
+            onClick={onOpenRewardTiersModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#5C3D22]/20 hover:bg-[#5C3D22]/40 border border-[#5C3D22]/50 rounded-lg text-amber-400 font-heading text-xs uppercase tracking-wider transition-all"
+          >
+            <Trophy className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">VIEW TIERS</span>
+          </button>
+
+          {/* Sound Toggle */}
           <button
             onClick={handleSoundToggle}
-            className="p-2 rounded-lg bg-stone-900 border border-stone-700 hover:border-amber-500/50 text-stone-300 hover:text-white transition-colors"
-            title={userState.soundEnabled ? 'Mute Retro Sound' : 'Unmute Retro Sound'}
+            className="p-2 text-stone-400 hover:text-amber-400 bg-stone-900 border border-stone-800 rounded-lg transition-colors"
+            title={
+              userState.soundEnabled ? 'Mute sound effects' : 'Enable sound effects'
+            }
           >
             {userState.soundEnabled ? (
-              <Volume2 className="w-5 h-5 text-amber-400" />
+              <Volume2 className="w-4 h-4" />
             ) : (
-              <VolumeX className="w-5 h-5 text-stone-500" />
+              <VolumeX className="w-4 h-4" />
             )}
           </button>
 

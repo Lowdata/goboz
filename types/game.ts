@@ -46,7 +46,6 @@ export interface PullResult {
   timestamp: string;
   walletAddress: string;
   pullsRemaining: number;
-  pityCounter: number;
   isGuaranteedHit: boolean;
   bonusSpinAwarded?: boolean;
 }
@@ -69,7 +68,6 @@ export interface UserState {
   referralCode?: string;
   referredUsers?: string[];
   pullsRemaining: number;
-  pityCounter: number;
   totalPullsDone: number;
   referralCount: number;
   streakCount: number;

@@ -55,7 +55,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* Subhead */}
       <p className="subhead font-sans">
-        Every goblin&apos;s got a lever to pull and something to steal. Yours might be a whitelist spot, a Triple Gem jackpot, or greasy tribal loot.
+        Every goblin&apos;s got a lever to pull and something to steal. Yours might be a whitelist spot.
       </p>
 
       {/* Hero Buttons */}

@@ -3,8 +3,8 @@ import { OUTCOME_TIERS } from '@/utils/constants';
 
 export const RewardTiers: React.FC = () => {
   const tiersList = [
-    OUTCOME_TIERS.triple_gem,
     OUTCOME_TIERS.guaranteed_wl,
+    OUTCOME_TIERS.triple_gem,
     OUTCOME_TIERS.fcfs_raffle,
     OUTCOME_TIERS.no_match
   ];
@@ -61,9 +61,15 @@ export const RewardTiers: React.FC = () => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-stone-800 flex items-center justify-between text-xs font-pixel text-stone-400">
-              <span>OUTCOME STATUS</span>
+              <span>OUTCOME TYPE</span>
               <span style={{ color: tier.color }} className="uppercase">
-                {tier.isGuaranteed ? 'GUARANTEED REWARD' : 'CHANCE / PROGRESS'}
+                {tier.id === 'guaranteed_wl'
+                  ? 'GUARANTEED WHITELIST (WL)'
+                  : tier.id === 'triple_gem'
+                  ? 'FREE LEVER SPIN'
+                  : tier.id === 'fcfs_raffle'
+                  ? 'FCFS'
+                  : 'BETTER LUCK, GOBLIN'}
               </span>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TaskItem, UserState } from '@/types/game';
-import { INITIAL_TASKS, PITY_THRESHOLD } from '@/utils/constants';
-import { CheckCircle2, Copy, ExternalLink, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
+import { INITIAL_TASKS } from '@/utils/constants';
+import { CheckCircle2, Copy, ExternalLink, Sparkles } from 'lucide-react';
 import { sound } from '@/utils/sound';
 
 interface FlywheelEconomyProps {
@@ -19,8 +19,9 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
 }) => {
   const [copiedRef, setCopiedRef] = useState(false);
   const [completingTask, setCompletingTask] = useState<string | null>(null);
-  const tasks = (tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS)
-    .filter((task) => !['connect_wallet', 'refer_friend', 'daily_claim', 'share_result'].includes(task.id));
+  const tasks = (tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS).filter(
+    (task) => !['connect_wallet', 'refer_friend', 'share_result'].includes(task.id)
+  );
 
   const handleTaskClick = (task?: TaskItem) => {
     if (!task) return;
@@ -79,8 +80,21 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
         </p>
       </div>
 
-      {/* 4 Core Rules Callout Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Pull economy rules */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
+          <div>
+            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
+              CONNECT WALLET
+            </span>
+            <p className="text-xs text-stone-300 font-sans">
+              Every goblin starts with one free pull after connecting a wallet.
+            </p>
+          </div>
+          <div className="mt-3 pt-2 border-t border-stone-800">
+            <span className="font-pixel text-sm text-emerald-400">+1 FREE PULL</span>
+          </div>
+        </div>
         <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
           <div>
             <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
@@ -105,59 +119,14 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
         <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
           <div>
             <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
-              COME BACK TOMORROW
+              SOCIAL TASKS
             </span>
             <p className="text-xs text-stone-300 font-sans">
-              Daily goblin rations for active lever pullers. Never let your streak die.
+              Follow, like, and repost to keep the lever stocked with pulls.
             </p>
           </div>
-          <div className="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between">
-            <span className="font-pixel text-sm text-emerald-400">+1 PULL</span>
-            <button
-              onClick={handleDailyClaim}
-              disabled={!!userState.completedTasks['daily_claim']}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-pixel transition-colors ${
-                userState.completedTasks['daily_claim']
-                  ? 'bg-emerald-900/40 text-emerald-400 cursor-default'
-                  : 'bg-amber-500 hover:bg-amber-400 text-stone-950'
-              }`}
-            >
-              <span>
-                {userState.completedTasks['daily_claim'] ? 'CLAIMED' : 'CLAIM TODAY'}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-stone-900 border-2 border-stone-800 hover:border-amber-500/50 rounded-xl p-4 flex flex-col justify-between transition-all">
-          <div>
-            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
-              SHARE YOUR RESULT
-            </span>
-            <p className="text-xs text-stone-300 font-sans">
-              Every pull outcome card has a one-click share button to unlock a bonus spin.
-            </p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between">
-            <span className="font-pixel text-sm text-emerald-400">+1 BONUS PULL</span>
-            <span className="text-[10px] font-pixel text-stone-400">VIA CARD MODAL</span>
-          </div>
-        </div>
-
-        <div className="bg-stone-900 border-2 border-amber-600/60 rounded-xl p-4 flex flex-col justify-between transition-all shadow-lg shadow-amber-500/5">
-          <div>
-            <span className="font-pixel text-xs text-amber-400 uppercase tracking-wider block mb-1">
-              NO LUCK YET?
-            </span>
-            <p className="text-xs text-stone-300 font-sans">
-              5 empty pulls guarantees your next one hits. Bad luck protection is built in.
-            </p>
-          </div>
-          <div className="mt-3 pt-2 border-t border-stone-800 flex items-center justify-between">
-            <span className="font-pixel text-xs text-amber-400">
-              {userState.pityCounter} / {PITY_THRESHOLD} PITY
-            </span>
-            <span className="text-[10px] font-pixel text-emerald-400">GUARANTEED HIT</span>
+          <div className="mt-3 pt-2 border-t border-stone-800">
+            <span className="font-pixel text-sm text-emerald-400">+1 PULL PER TASK</span>
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { SymbolId, OutcomeTierId, PullResult } from '@/types/game';
-import { PITY_THRESHOLD } from '@/utils/constants';
 import { connectDB } from '@/lib/db';
 import { User } from '@/models/User';
 import { assertSameOrigin, getAuthenticatedWallet, publicUser } from '@/lib/security';
@@ -64,32 +63,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const pityCounter = user.pityCounter || 0;
-    const isGuaranteedHit = pityCounter >= PITY_THRESHOLD;
-
     let tierId: OutcomeTierId = 'no_match';
     let symbols: [SymbolId, SymbolId, SymbolId] = ['skull', 'mushroom', 'gold_coin'];
 
     const rand = randomInt(10_000) / 100;
 
-    if (isGuaranteedHit) {
-      // Pity hit triggered! Guarantee at least a 2x or 3x match
-      if (rand < 25) {
-        // 25% chance of 3-of-a-kind Guaranteed WL
-        const sym = getRandomItem(NON_GEM_SYMBOLS);
-        tierId = 'guaranteed_wl';
-        symbols = [sym, sym, sym];
-      } else {
-        // 75% chance of 2-of-a-kind FCFS
-        const pairSym = getRandomItem(ALL_SYMBOLS);
-        const otherSymbols = ALL_SYMBOLS.filter((s) => s !== pairSym);
-        const thirdSym = getRandomItem(otherSymbols);
-        tierId = 'fcfs_raffle';
-        symbols = [pairSym, pairSym, thirdSym];
-      }
-    } else {
-      // Standard weighted RNG
-      if (rand < 6) {
+    // Weighted RNG: every pull is independent.
+    if (rand < 6) {
         // 6% Triple Gem Jackpot
         tierId = 'triple_gem';
         symbols = ['gem', 'gem', 'gem'];
@@ -108,7 +88,7 @@ export async function POST(request: NextRequest) {
         result[pos] = thirdSym;
         tierId = 'fcfs_raffle';
         symbols = result;
-      } else {
+    } else {
         // 38% No match (3 different symbols)
         const s1 = getRandomItem(ALL_SYMBOLS);
         let s2 = getRandomItem(ALL_SYMBOLS);
@@ -121,14 +101,6 @@ export async function POST(request: NextRequest) {
         }
         tierId = 'no_match';
         symbols = [s1, s2, s3];
-      }
-    }
-
-    let newPityCounter = pityCounter;
-    if (tierId === 'no_match') {
-      newPityCounter = pityCounter + 1;
-    } else {
-      newPityCounter = 0;
     }
 
     let newPullsRemaining = user.pullsLeft - 1;
@@ -139,9 +111,9 @@ export async function POST(request: NextRequest) {
     }
 
     const tierNameMap: Record<OutcomeTierId, string> = {
-      triple_gem: 'Triple Gem',
-      guaranteed_wl: '3-of-a-kind',
-      fcfs_raffle: '2-of-a-kind',
+      guaranteed_wl: '3x match (any)',
+      triple_gem: '3x Gem',
+      fcfs_raffle: '2x match',
       no_match: 'No match'
     };
 
@@ -156,15 +128,14 @@ export async function POST(request: NextRequest) {
       timestamp,
       walletAddress: user.walletAddress,
       pullsRemaining: newPullsRemaining,
-      pityCounter: newPityCounter,
-      isGuaranteedHit,
+      isGuaranteedHit: false,
       bonusSpinAwarded
     };
 
     const updatedUser = await User.findOneAndUpdate(
-      { _id: user._id, pullsLeft: user.pullsLeft, pityCounter },
+      { _id: user._id, pullsLeft: user.pullsLeft },
       {
-        $set: { pullsLeft: newPullsRemaining, pityCounter: newPityCounter },
+        $set: { pullsLeft: newPullsRemaining },
         $push: { rewards: { pullId, tierId, tierName: tierNameMap[tierId], symbols, timestamp } }
       },
       { new: true }

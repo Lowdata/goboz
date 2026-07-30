@@ -9,6 +9,11 @@ export async function GET() {
     const count = await Task.countDocuments();
     if (count === 0) {
       await Task.insertMany(INITIAL_DB_TASKS);
+    } else {
+      await Task.deleteMany({ id: { $nin: INITIAL_DB_TASKS.map((t) => t.id) } });
+      for (const item of INITIAL_DB_TASKS) {
+        await Task.findOneAndUpdate({ id: item.id }, item, { upsert: true });
+      }
     }
 
     const tasks = await Task.find({}).sort({ createdAt: 1 });

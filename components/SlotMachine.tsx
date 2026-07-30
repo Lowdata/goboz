@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { Reel } from './Reel';
 import { Lever } from './Lever';
 import { SymbolId, PullResult, UserState } from '@/types/game';
-import { PITY_THRESHOLD } from '@/utils/constants';
 import { sound } from '@/utils/sound';
-import { Sparkles, AlertCircle } from 'lucide-react';
 
 interface SlotMachineProps {
   userState: UserState;
@@ -87,9 +85,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       onPullCompleted(pendingResult);
     }
   };
-
-  const pityProgress = Math.min(userState.pityCounter, PITY_THRESHOLD);
-  const pityPercent = (pityProgress / PITY_THRESHOLD) * 100;
 
   return (
     <div className="w-full flex flex-col items-center my-6">
@@ -209,38 +204,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
         </div>
 
-        {/* Pity Timer & Bad Luck Protection Bar */}
-        <div className="mt-6 pt-4 border-t border-stone-800 w-full">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-2">
-            <div className="flex items-center gap-2 text-stone-300">
-              <AlertCircle className="w-4 h-4 text-amber-400" />
-              <span className="font-pixel text-xs text-parchment-200">
-                NO LUCK YET? 5 EMPTY PULLS GUARANTEES YOUR NEXT ONE HITS.
-              </span>
-            </div>
-            <span className="font-pixel text-xs text-amber-400">
-              {pityProgress} / {PITY_THRESHOLD} PITY
-            </span>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full h-3 bg-stone-950 border border-stone-800 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-500 ${
-                pityProgress >= PITY_THRESHOLD
-                  ? 'bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 animate-pulse'
-                  : 'bg-gradient-to-r from-emerald-600 to-amber-500'
-              }`}
-              style={{ width: `${Math.max(pityPercent, 5)}%` }}
-            />
-          </div>
-
-          {pityProgress >= PITY_THRESHOLD && (
-            <p className="mt-2 text-center font-pixel text-[11px] text-amber-400 animate-bounce">
-              🔥 GUARANTEED LOOT ON YOUR NEXT PULL! YANK THE LEVER NOW! 🔥
-            </p>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({
         </h2>
 
         <p className="text-stone-400 font-sans max-w-lg mx-auto mb-8 text-sm sm:text-base">
-          Every pull gets you closer to a guaranteed whitelist spot or a Triple Gem jackpot. No kings. No masters. Only da tribe.
+          Every goblin&apos;s got a lever to pull and something to steal. Yours might be a whitelist spot. No kings. No masters. Only da tribe.
         </p>
 
         {userState.isConnected ? (

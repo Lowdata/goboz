@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { X, Trophy, Sparkles, ShieldCheck } from 'lucide-react';
-import { OUTCOME_TIERS, PITY_THRESHOLD } from '@/utils/constants';
-import { SymbolId } from '@/types/game';
+import { X } from 'lucide-react';
+import { OUTCOME_TIERS } from '@/utils/constants';
 
 interface RewardTiersModalProps {
   isOpen: boolean;
@@ -16,7 +15,12 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const tiers = Object.values(OUTCOME_TIERS);
+  const tiers = [
+    OUTCOME_TIERS.guaranteed_wl,
+    OUTCOME_TIERS.triple_gem,
+    OUTCOME_TIERS.fcfs_raffle,
+    OUTCOME_TIERS.no_match
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
@@ -74,26 +78,14 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
                   EXAMPLE PULL
                 </div>
                 <div className="flex items-center gap-1.5 text-xl">
-                  {tier.id === 'triple_gem' && '💎 💎 💎'}
                   {tier.id === 'guaranteed_wl' && '🍄 🍄 🍄'}
+                  {tier.id === 'triple_gem' && '💎 💎 💎'}
                   {tier.id === 'fcfs_raffle' && '🪙 🪙 🗡️'}
+                  {tier.id === 'no_match' && '🪙 🍄 💀'}
                 </div>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Bad Luck Protection Note */}
-        <div className="mt-8 p-5 bg-[#5C3D22]/10 border-2 border-[#5C3D22]/40 rounded-2xl flex items-start gap-4">
-          <ShieldCheck className="w-6 h-6 shrink-0 text-[#5C3D22] mt-0.5" />
-          <div className="text-xs sm:text-sm">
-            <h4 className="font-heading text-stone-950 tracking-wide mb-1 uppercase">
-              BAD LUCK PROTECTION ({PITY_THRESHOLD} PULLS)
-            </h4>
-            <p className="font-sans text-stone-700 leading-relaxed">
-              Every <strong>{PITY_THRESHOLD} consecutive non-matching pulls</strong> triggers a guaranteed tribal loot drop! The machine never lets a loyal goblin leave empty-handed.
-            </p>
-          </div>
         </div>
 
         {/* Close Button Footer */}

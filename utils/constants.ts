@@ -1,7 +1,5 @@
 import { SymbolId, SymbolItem, OutcomeTierId, OutcomeTier, TaskItem } from '../types/game';
 
-export const PITY_THRESHOLD = 5;
-
 export const SYMBOLS: Record<SymbolId, SymbolItem> = {
   gold_coin: {
     id: 'gold_coin',
@@ -89,23 +87,10 @@ export const SYMBOL_LIST: SymbolItem[] = [
 ];
 
 export const OUTCOME_TIERS: Record<OutcomeTierId, OutcomeTier> = {
-  triple_gem: {
-    id: 'triple_gem',
-    name: 'Triple Gem',
-    title: '💎 Triple Gem',
-    description: 'Jackpot. Guaranteed mint, no raffle, no waiting.',
-    badge: 'JACKPOT MINT + FREE SPIN',
-    emoji: '💎',
-    color: '#38BDF8',
-    bgColor: 'rgba(56, 189, 248, 0.18)',
-    borderColor: '#0284C7',
-    isGuaranteed: true,
-    rewardText: 'Guaranteed Mint Spot + 1 Free Lever Spin!'
-  },
   guaranteed_wl: {
     id: 'guaranteed_wl',
-    name: '3-of-a-kind',
-    title: '🟡 3-of-a-kind',
+    name: '3x match (any)',
+    title: '🟡 3x match (any)',
     description: "You're on the Whitelist. Straight up.",
     badge: 'GUARANTEED WHITELIST',
     emoji: '🟡',
@@ -115,31 +100,44 @@ export const OUTCOME_TIERS: Record<OutcomeTierId, OutcomeTier> = {
     isGuaranteed: true,
     rewardText: 'Guaranteed Whitelist (WL) Spot Secured!'
   },
+  triple_gem: {
+    id: 'triple_gem',
+    name: '3x Gem',
+    title: '💎 3x Gem',
+    description: '1 free lever spin',
+    badge: 'FREE LEVER SPIN',
+    emoji: '💎',
+    color: '#38BDF8',
+    bgColor: 'rgba(56, 189, 248, 0.18)',
+    borderColor: '#0284C7',
+    isGuaranteed: true,
+    rewardText: '+1 Free Lever Spin Awarded!'
+  },
   fcfs_raffle: {
     id: 'fcfs_raffle',
-    name: '2-of-a-kind',
-    title: '🥾 2-of-a-kind',
-    description: 'Raffle entry, odds weighted in your favor.',
+    name: '2x match',
+    title: '🥾 2x match',
+    description: 'fcfs',
     badge: 'FCFS RAFFLE ENTRY',
     emoji: '🥾',
     color: '#A3E635',
     bgColor: 'rgba(163, 230, 53, 0.15)',
     borderColor: '#65A30D',
     isGuaranteed: false,
-    rewardText: 'FCFS Raffle Entry — Higher Odds Tier'
+    rewardText: 'fcfs — 2x match raffle entry'
   },
   no_match: {
     id: 'no_match',
     name: 'No match',
     title: '💀 No match',
-    description: 'Still counts. Every pull gets you closer to a guaranteed hit.',
-    badge: 'PITY TIMER +1',
+    description: 'Better luck, goblin.',
+    badge: 'NO MATCH',
     emoji: '💀',
     color: '#94A3B8',
     bgColor: 'rgba(148, 163, 184, 0.12)',
     borderColor: '#475569',
     isGuaranteed: false,
-    rewardText: 'Better luck, goblin. Your pity counter increased!'
+    rewardText: 'Better luck, goblin.'
   }
 };
 
@@ -147,9 +145,9 @@ export const INITIAL_TASKS: TaskItem[] = [
   {
     id: 'connect_wallet',
     title: 'Connect Wallet',
-    subtitle: 'Link your wallet. Every goblin gets 100 free pulls in test mode!',
-    rewardText: '+100 FREE PULLS (TEST MODE)',
-    rewardPulls: 100,
+    subtitle: '1 free pull on wallet connect.',
+    rewardText: '+1 FREE PULL',
+    rewardPulls: 1,
     isCompleted: false,
     type: 'connect'
   },
@@ -174,32 +172,13 @@ export const INITIAL_TASKS: TaskItem[] = [
     type: 'social'
   },
   {
-    id: 'join_discord',
-    title: 'Join Gobboz Discord',
-    subtitle: 'Enter the underground goblin war room.',
-    rewardText: '+1 PULL',
-    rewardPulls: 1,
-    isCompleted: false,
-    link: 'https://discord.gg/gobboz',
-    type: 'social'
-  },
-  {
     id: 'refer_friend',
     title: 'Refer a Goblin Friend',
-    subtitle: 'Share your personal referral link (+2 per friend who connects).',
+    subtitle: '+2 pull on referral that connects a new wallet (referral code in URL, tracked server-side).',
     rewardText: '+2 PULLS',
     rewardPulls: 2,
     isCompleted: false,
     type: 'referral'
-  },
-  {
-    id: 'daily_claim',
-    title: 'Come Back Tomorrow',
-    subtitle: 'Daily goblin rations for active lever pullers.',
-    rewardText: '+1 PULL',
-    rewardPulls: 1,
-    isCompleted: false,
-    type: 'daily'
   },
   {
     id: 'share_result',

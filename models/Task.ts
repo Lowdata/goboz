@@ -32,9 +32,9 @@ export const INITIAL_DB_TASKS = [
   {
     id: 'connect_wallet',
     title: 'Connect MetaMask Wallet',
-    subtitle: 'Link your wallet. Every goblin gets 3 initial pulls!',
-    rewardText: '+3 INITIAL PULLS',
-    rewardPulls: 3,
+    subtitle: '1 free pull on wallet connect.',
+    rewardText: '+1 FREE PULL',
+    rewardPulls: 1,
     type: 'connect' as const
   },
   {
@@ -58,17 +58,9 @@ export const INITIAL_DB_TASKS = [
   {
     id: 'refer_friend',
     title: 'Refer a Goblin Friend',
-    subtitle: 'Share your personal referral code (+2 pulls per friend who connects).',
+    subtitle: '+2 pull on referral that connects a new wallet (referral code in URL, tracked server-side).',
     rewardText: '+2 PULLS',
     rewardPulls: 2,
-    type: 'social' as const
-  },
-  {
-    id: 'daily_claim',
-    title: 'Come Back Tomorrow',
-    subtitle: 'Daily goblin rations for active lever pullers.',
-    rewardText: '+1 PULL',
-    rewardPulls: 1,
     type: 'social' as const
   },
   {

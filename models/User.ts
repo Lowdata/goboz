@@ -17,7 +17,6 @@ export interface IUser extends Document {
   referredUsers: string[];
   referredBy?: string;
   completedTasks: string[];
-  pityCounter: number;
   lastDailyClaim?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -50,7 +49,7 @@ const UserSchema = new Schema<IUser>(
     },
     pullsLeft: {
       type: Number,
-      default: 3
+      default: 1
     },
     rewards: {
       type: [RewardItemSchema],
@@ -74,10 +73,6 @@ const UserSchema = new Schema<IUser>(
     completedTasks: {
       type: [String],
       default: []
-    },
-    pityCounter: {
-      type: Number,
-      default: 0
     },
     lastDailyClaim: {
       type: Date,

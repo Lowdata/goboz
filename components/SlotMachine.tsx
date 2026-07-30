@@ -198,13 +198,6 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
               className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20"
             />
 
-            {/* Layer 4: Glass Reflection Overlay ON TOP of Reels and Casing (z-30) */}
-            <img
-              src="/slot-machine/slot-machine5.png"
-              alt=""
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-30"
-            />
-
             {/* Layer 5: Interactive Lever Overlay covering the whole machine (z-40) */}
             <button
               type="button"

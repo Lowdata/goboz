@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight, AlertCircle, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { UserState } from '@/types/game';
 
@@ -67,7 +67,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       const res = await fetch('/api/auth', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: fallbackAddress, signature: 'DEMO_SIGNATURE', inviteCode: inviteCode || undefined })
+        body: JSON.stringify({ walletAddress: fallbackAddress, signature: 'DEMO_SIGNATURE' })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -135,7 +135,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       const res = await fetch('/api/auth', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: address, signature, inviteCode: inviteCode || undefined })
+        body: JSON.stringify({ walletAddress: address, signature })
       });
 
       const data = await res.json();
@@ -179,10 +179,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       }
 
       onSuccess({ ...data, isConnected: true });
-      toast.success('Welcome to DA TRIBE!');
-      setTimeout(() => {
-        onClose();
-      }, 1000);
+      setStep(3);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to update Twitter handle.';
       toast.error(message);
@@ -194,12 +191,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   // STEP 3: Submit Invite Code
   const handleApplyInvite = async () => {
     if (!inviteCode.trim()) {
-      setError('Please enter a referral code.');
+      toast.error('Please enter a referral code.');
       return;
     }
     setLoading(true);
-    setError(null);
-    setSuccessMsg(null);
     try {
       const res = await fetch('/api/user', {
         method: 'PUT',
@@ -214,14 +209,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         throw new Error(data.error || 'Failed to apply invite code.');
       }
 
-      setSuccessMsg('+1 BONUS PULL AWARDED! Welcome to DA TRIBE!');
+      toast.success('+1 BONUS PULL AWARDED! Welcome to DA TRIBE!');
       onSuccess({ ...data, isConnected: true });
       setTimeout(() => {
         onClose();
       }, 1500);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to apply referral code.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -261,7 +256,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
         {/* Step Progress Bar */}
         <div className="flex gap-2 mb-6">
-          {[1, 2].map((s) => (
+          {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`h-2.5 flex-1 rounded-full transition-all border border-[#3A332B] ${
@@ -343,10 +338,55 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <button
                 onClick={handleSaveTwitter}
                 disabled={loading || !twitterHandle.trim()}
-                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
               >
-                <span>{loading ? 'SAVING...' : 'ENTER CAVERN'}</span>
-                {!loading && <ArrowRight className="w-4 h-4" />}
+                {loading ? 'SAVING...' : 'SAVE & NEXT'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: INVITE CODE */}
+        {step === 3 && (
+          <div className="space-y-6">
+            <div className="p-4 bg-stone-900/60 border border-stone-800 rounded-2xl">
+              <h3 className="font-heading text-lg text-amber-400 mb-2">
+                3. ADD INVITATION CODE (OPTIONAL)
+              </h3>
+              <p className="text-xs text-stone-300 font-sans leading-relaxed">
+                Got a referral code from a fellow Goblin? Enter it below to award <strong>+1 BONUS PULL</strong> to both you and your referrer!
+              </p>
+            </div>
+
+            <div>
+              <label className="block font-mono text-xs text-stone-400 mb-2">
+                INVITATION CODE
+              </label>
+              <input
+                type="text"
+                placeholder="GOB-XXXX"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                className="w-full px-4 py-3 bg-stone-900 border-2 border-stone-800 rounded-xl text-parchment-100 font-mono text-sm uppercase focus:outline-none focus:border-amber-500 transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleApplyInvite}
+                disabled={loading || !inviteCode.trim()}
+                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+              >
+                {loading ? 'APPLYING...' : 'APPLY CODE (+1 PULL)'}
+              </button>
+
+              <button
+                onClick={onClose}
+                disabled={loading}
+                className="py-3 px-6 bg-stone-900 hover:bg-stone-800 text-parchment-100 font-heading text-sm tracking-wider uppercase rounded-xl border border-stone-800 transition-colors flex items-center justify-center gap-2"
+              >
+                <span>ENTER CAVERN</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>

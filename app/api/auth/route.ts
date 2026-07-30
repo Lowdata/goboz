@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   if (!assertSameOrigin(request)) return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
   try {
-    const { walletAddress, signature, inviteCode } = await request.json();
+    const { walletAddress, signature } = await request.json();
     if (typeof walletAddress !== 'string' || typeof signature !== 'string' || !isAddress(walletAddress)) {
       return NextResponse.json({ error: 'A valid signed wallet request is required.' }, { status: 400 });
     }
@@ -64,29 +64,11 @@ export async function PUT(request: NextRequest) {
     if (user) {
       isExistingUser = true;
     } else {
-      let referredBy = undefined;
-      let extraPulls = 0;
-
-      if (inviteCode && typeof inviteCode === 'string') {
-        const referrer = await User.findOne({ referralCode: inviteCode.trim().toUpperCase() });
-        if (referrer && referrer.walletAddress !== address) {
-          referredBy = referrer.walletAddress;
-          extraPulls = 2; // +2 bonus for using a code
-          
-          // Also reward the referrer
-          await User.updateOne(
-            { _id: referrer._id }, 
-            { $inc: { pullsLeft: 2 }, $push: { referredUsers: address } }
-          );
-        }
-      }
-
       user = await User.create({ 
         walletAddress: address, 
         referralCode: await createReferralCode(), 
         completedTasks: ['connect_wallet'],
-        referredBy,
-        pullsLeft: 1 + extraPulls // default 1 + extra
+        pullsLeft: 1
       });
     }
     const response = NextResponse.json({ ...publicUser(user), isExistingUser });

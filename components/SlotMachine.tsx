@@ -89,7 +89,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   return (
     <div className="w-full flex flex-col items-center">
       {/* Main Machine Casing */}
-      <div className="relative w-full max-w-3xl bg-[#F7F2E4] border-4 border-[#3A332B] rounded-3xl p-4 sm:p-7 shadow-[8px_8px_0px_0px_#3A332B] overflow-hidden">
+      <div className="relative w-full max-w-3xl bg-[#F7F2E4] border-4 border-[#3A332B] rounded-3xl p-3 sm:p-5 md:p-6 shadow-[8px_8px_0px_0px_#3A332B] overflow-hidden">
         {/* Background Dungeon Skull Watermark */}
         <div className="absolute right-4 top-4 w-32 h-32 opacity-10 pointer-events-none">
           <img src="/skullpixel-rmbg.png" alt="" className="w-full h-full object-contain" />
@@ -129,7 +129,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         </div>
 
         {/* Center Slot Reels + Right Lever Container */}
-        <div className="flex flex-col xl:flex-row items-center justify-center gap-4 sm:gap-6 my-4 w-full">
+        <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-5 my-3 w-full">
           {/* Reels Display Housing */}
           <div className="relative bg-[#ECE3C6] border-4 border-[#3A332B] rounded-2xl p-3 sm:p-5 md:p-6 shadow-inner flex flex-col items-center w-full max-w-full">
             {/* Payline Label Banner */}

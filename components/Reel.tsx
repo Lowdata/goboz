@@ -57,7 +57,7 @@ export const Reel: React.FC<ReelProps> = ({
 
   return (
     <div
-      className={`relative w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 bg-[#F7F2E4] border-4 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-all shadow-[4px_4px_0px_0px_#3A332B] ${
+      className={`relative w-16 sm:w-20 md:w-24 lg:w-24 xl:w-28 h-24 sm:h-28 md:h-32 lg:h-36 xl:h-40 bg-[#F7F2E4] border-4 rounded-xl flex flex-col items-center justify-center overflow-hidden transition-all shadow-[4px_4px_0px_0px_#3A332B] ${
         isLocallySpinning
           ? 'border-[#5D7C3B] bg-[#ECE3C6] animate-pulse'
           : 'border-[#3A332B]'

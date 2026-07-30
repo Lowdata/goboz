@@ -274,7 +274,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 1. CONNECT WALLET TO PULL
               </h3>
               <p className="text-xs text-[#262320] font-sans max-w-sm mx-auto leading-relaxed font-medium">
-                Connect your MetaMask or use Instant Demo Wallet to enter the goblin cavern. Every goblin gets <strong>+3 INITIAL LEVER PULLS</strong> automatically!
+                Connect your MetaMask wallet to enter the goblin cavern. Every goblin gets <strong>+3 INITIAL LEVER PULLS</strong> automatically!
               </p>
             </div>
 
@@ -289,15 +289,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 className="w-6 h-6"
               />
               <span>{loading ? 'CONNECTING WALLET...' : 'CONNECT METAMASK WALLET'}</span>
-            </button>
-
-            <button
-              onClick={handleInstantDemoConnect}
-              disabled={loading}
-              className="w-full py-3.5 px-6 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs sm:text-sm tracking-wider uppercase rounded-xl shadow-[4px_4px_0px_0px_#262320] transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <span>⚡</span>
-              <span>INSTANT CONNECT (DEMO / ANY WALLET)</span>
             </button>
           </div>
         )}

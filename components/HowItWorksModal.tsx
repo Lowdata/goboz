@@ -51,10 +51,10 @@ export const HowItWorksModal: React.FC<HowItWorksModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Parchment Scroll Body */}
-        <div className="relative w-full bg-[#E7D6A6] border-x-4 border-[#3A2A20] p-6 sm:p-10 shadow-2xl overflow-y-auto max-h-[85vh] text-[#262320]">
+        <div className="relative w-full bg-[#E7D6A6] border-x-4 border-[#3A2A20] p-6 sm:p-10 shadow-2xl parchment-unroll max-h-[85vh] text-[#262320]">
           {/* Background Skull Watermark */}
-          <div className="absolute right-4 bottom-4 w-40 h-40 opacity-10 pointer-events-none">
-            <img src="/skullpixel-rmbg.png" alt="" className="w-full h-full object-contain" />
+          <div className="absolute right-4 bottom-4 w-44 h-44 opacity-15 pointer-events-none">
+            <img src="/skull.png" alt="" className="w-full h-full object-contain" />
           </div>
 
           {/* Header Banner */}

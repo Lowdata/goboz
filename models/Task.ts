@@ -43,7 +43,7 @@ export const INITIAL_DB_TASKS = [
     subtitle: 'Join the tribe on X for alpha & shiny drops.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
-    link: 'https://x.com/gobbozhq',
+    link: 'https://twitter.com/intent/follow?screen_name=GobbozHQ',
     type: 'social' as const
   },
   {
@@ -52,7 +52,7 @@ export const INITIAL_DB_TASKS = [
     subtitle: 'Spread the meme. We gib. We grib.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
-    link: 'https://x.com/gobbozhq/status/2082134899067126023',
+    link: 'https://twitter.com/intent/retweet?tweet_id=2082134899067126023',
     type: 'social' as const
   },
   {

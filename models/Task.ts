@@ -79,13 +79,5 @@ export const INITIAL_DB_TASKS = [
     rewardText: '+1 BONUS PULL',
     rewardPulls: 1,
     type: 'social' as const
-  },
-  {
-    id: 'share_loss',
-    title: 'Share Your Loss',
-    subtitle: 'Post your loss on X to unlock a pity spin.',
-    rewardText: '+1 PULL',
-    rewardPulls: 1,
-    type: 'social' as const
   }
 ];

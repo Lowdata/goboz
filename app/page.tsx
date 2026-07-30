@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { UserState, PullResult, TaskItem } from '@/types/game';
 import { Navbar } from '@/components/Navbar';
 import { SlotMachine } from '@/components/SlotMachine';
@@ -231,9 +232,20 @@ export default function GobbozHomePage() {
     void handleCompleteTask('share_result', 1);
   };
 
-  const handleLossShareBonusClaimed = () => {
-    if (userState.completedTasks['share_loss']) return;
-    void handleCompleteTask('share_loss', 1);
+  const handleLossShareBonusClaimed = async () => {
+    try {
+      const res = await fetch('/api/pull/bonus', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setUserState((prev) => ({
+          ...prev,
+          pullsRemaining: data.user?.pullsLeft !== undefined ? data.user.pullsLeft : prev.pullsRemaining + 1
+        }));
+        toast.success('+1 Pity Spin Added!');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const scrollToMachine = () => {

@@ -4,6 +4,7 @@ import { OUTCOME_TIERS } from '@/utils/constants';
 import confetti from 'canvas-confetti';
 import { Download, Share2, Sparkles, CheckCircle2 } from 'lucide-react';
 import * as htmlToImage from 'html-to-image';
+import toast from 'react-hot-toast';
 
 interface RewardCardModalProps {
   result: PullResult | null;
@@ -11,6 +12,7 @@ interface RewardCardModalProps {
   onClose: () => void;
   onShareBonusClaimed: () => void;
   twitterHandle?: string;
+  referralCode?: string;
 }
 
 export const RewardCardModal: React.FC<RewardCardModalProps> = ({
@@ -18,7 +20,8 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   isOpen,
   onClose,
   onShareBonusClaimed,
-  twitterHandle
+  twitterHandle,
+  referralCode
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +63,14 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
 
   const handleShareToX = async () => {
     const tier = OUTCOME_TIERS[result.tierId];
-    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${tier.title}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT`;
+    
+    let tweetText = `Just pulled the @GobbozHQ lever and landed: ${tier.title}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT`;
+    
+    if (result.tierId === 'no_match') {
+      const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
+      tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}\n\n#Gobboz #NFT`;
+    }
+    
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     
     window.open(shareUrl, '_blank');
@@ -95,8 +105,8 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   const dateStr = new Date(result.timestamp).toLocaleDateString();
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="min-h-full flex flex-col items-center justify-center p-4 py-8 sm:py-10">
-        <div className="relative w-full max-w-[240px] sm:max-w-sm flex flex-col items-center">
+      <div className="min-h-[100dvh] flex flex-col items-center p-4 py-8 sm:py-12">
+        <div className="relative w-full max-w-[260px] sm:max-w-sm flex flex-col items-center my-auto">
           <button
             onClick={onClose}
             className="fixed sm:absolute top-4 right-4 sm:-top-4 sm:-right-4 z-50 w-10 h-10 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] rounded-full border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#262320] flex items-center justify-center font-bold text-lg"
@@ -173,8 +183,9 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
           {result.tierId === 'no_match' && (
             <button
               onClick={() => {
-                navigator.clipboard.writeText(`${window.location.origin}/?ref=${result.walletAddress}`);
-                alert("Referral link copied to clipboard! Share it with a friend to earn +1 pull when they connect.");
+                const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
+                navigator.clipboard.writeText(link);
+                toast.success("Referral link copied!");
               }}
               className="w-full flex items-center justify-center gap-2 py-3 sm:py-3.5 px-4 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
             >

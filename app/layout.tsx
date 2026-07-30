@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
   title: "GOBBOZ — Pull the Lever. Loot the List.",
@@ -21,6 +22,19 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-stone-950 text-parchment-100 selection:bg-amber-500 selection:text-stone-950">
         {children}
+        <Toaster 
+          position="bottom-center" 
+          toastOptions={{
+            style: {
+              background: '#E9D9AC',
+              color: '#262320',
+              border: '2px solid #3A332B',
+              borderRadius: '12px',
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+            },
+          }} 
+        />
       </body>
     </html>
   );

@@ -11,6 +11,7 @@ import { RewardTiersModal } from '@/components/RewardTiersModal';
 import { HowItWorksModal } from '@/components/HowItWorksModal';
 import { PullHistoryModal } from '@/components/PullHistoryModal';
 import { RewardCardModal } from '@/components/RewardCardModal';
+import { ParchmentWatermarks } from '@/components/ParchmentWatermarks';
 
 export default function GobbozHomePage() {
   const [userState, setUserState] = useState<UserState>({
@@ -233,7 +234,10 @@ export default function GobbozHomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ECE3C6] text-[#262320] flex flex-col font-sans selection:bg-[#5D7C3B] selection:text-[#ECE3C6]">
+    <div className="min-h-screen bg-[#ECE3C6] text-[#262320] flex flex-col font-sans selection:bg-[#5D7C3B] selection:text-[#ECE3C6] relative">
+      {/* Background Watermarks */}
+      <ParchmentWatermarks />
+      
       {/* Top Navbar */}
       <Navbar
         userState={userState}
@@ -340,6 +344,7 @@ export default function GobbozHomePage() {
         onClose={() => setActiveCardModalResult(null)}
         onShareBonusClaimed={handleShareBonusClaimed}
         twitterHandle={userState.twitter}
+        referralCode={userState.referralCode}
       />
     </div>
   );

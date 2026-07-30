@@ -3,6 +3,7 @@ import { TaskItem, UserState } from '@/types/game';
 import { INITIAL_TASKS } from '@/utils/constants';
 import { CheckCircle2, Copy, ExternalLink, Sparkles } from 'lucide-react';
 import { sound } from '@/utils/sound';
+import toast from 'react-hot-toast';
 
 interface FlywheelEconomyProps {
   userState: UserState;
@@ -17,7 +18,6 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
   onOpenConnectModal,
   tasksDB
 }) => {
-  const [copiedRef, setCopiedRef] = useState(false);
   const [completingTask, setCompletingTask] = useState<string | null>(null);
   const tasks = (tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS).filter(
     (task) => !['connect_wallet', 'refer_friend', 'share_result'].includes(task.id)
@@ -62,10 +62,8 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
     const refCode = userState.referralCode || userState.walletAddress;
     const refLink = `${window.location.origin}/?ref=${refCode}`;
     navigator.clipboard.writeText(refLink);
-    setCopiedRef(true);
+    toast.success("Referral link copied!");
     sound.playCoin();
-
-    setTimeout(() => setCopiedRef(false), 3000);
   };
 
   return (
@@ -101,7 +99,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
               className="flex items-center gap-1.5 px-2.5 py-1 bg-[#ECE3C6] hover:bg-[#E2D8B9] text-[#262320] border border-[#3A332B] rounded text-[10px] font-pixel shadow-[1px_1px_0px_0px_#3A332B] transition-all"
             >
               <Copy className="w-3.5 h-3.5 text-[#5D7C3B]" />
-              <span>{copiedRef ? 'COPIED!' : userState.referralCode ? `CODE: ${userState.referralCode}` : 'COPY LINK'}</span>
+              <span>{userState.referralCode ? `CODE: ${userState.referralCode}` : 'COPY LINK'}</span>
             </button>
           </div>
         </div>

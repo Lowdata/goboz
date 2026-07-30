@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, AlertCircle, Check, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { UserState } from '@/types/game';
 
 interface EthereumProvider {
@@ -38,10 +39,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       const raf = requestAnimationFrame(() => {
-        setStep(initialStep);
-        setError(null);
-        setSuccessMsg(null);
-        if (currentUser?.twitter) {
+        if (step === 1 || step === initialStep) {
+          setStep(initialStep);
+        }
+        if (currentUser?.twitter && !twitterHandle) {
           setTwitterHandle(currentUser.twitter);
         }
         if (typeof window !== 'undefined') {
@@ -52,35 +53,35 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       });
       return () => cancelAnimationFrame(raf);
     }
-  }, [isOpen, initialStep, currentUser]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialStep]);
 
   if (!isOpen) return null;
 
   // INSTANT WALLET FALLBACK / SIMULATED GOBLIN WALLET
   const handleInstantDemoConnect = async () => {
     setLoading(true);
-    setError(null);
     try {
       const randomHex = Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0');
       const fallbackAddress = `0x71c8493a38f02901323412345678${randomHex}8e3b`;
       const res = await fetch('/api/auth', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: fallbackAddress, signature: 'DEMO_SIGNATURE' })
+        body: JSON.stringify({ walletAddress: fallbackAddress, signature: 'DEMO_SIGNATURE', inviteCode: inviteCode || undefined })
       });
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Failed to connect wallet.');
       }
       onSuccess({ ...data, isConnected: true });
-      if (data.isExistingUser || (data.twitter && data.twitter.trim() !== '')) {
+      if (data.isExistingUser && data.twitter && data.twitter.trim() !== '') {
         onClose();
         return;
       }
       setStep(2);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to connect demo wallet.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -89,7 +90,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   // STEP 1: Connect MetaMask Wallet (with Automatic Fallback)
   const handleConnectMetaMask = async () => {
     setLoading(true);
-    setError(null);
     try {
       let address = '';
       if (typeof window !== 'undefined' && window.ethereum) {
@@ -135,7 +135,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       const res = await fetch('/api/auth', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress: address, signature })
+        body: JSON.stringify({ walletAddress: address, signature, inviteCode: inviteCode || undefined })
       });
 
       const data = await res.json();
@@ -144,7 +144,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       }
 
       onSuccess({ ...data, isConnected: true });
-      if (data.isExistingUser || (data.twitter && data.twitter.trim() !== '')) {
+      if (data.isExistingUser && data.twitter && data.twitter.trim() !== '') {
         onClose();
         return;
       }
@@ -158,11 +158,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   };
 
   // STEP 2: Save Twitter
-  const handleSaveTwitter = async (skip: boolean = false) => {
+  const handleSaveTwitter = async () => {
     setLoading(true);
-    setError(null);
     try {
-      if (!skip && !twitterHandle.trim()) {
+      if (!twitterHandle.trim()) {
         throw new Error('Please provide your Twitter / X handle.');
       }
 
@@ -170,7 +169,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          twitterHandle: skip ? '' : twitterHandle.trim()
+          twitterHandle: twitterHandle.trim()
         })
       });
 
@@ -180,10 +179,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       }
 
       onSuccess({ ...data, isConnected: true });
-      setStep(3);
+      toast.success('Welcome to DA TRIBE!');
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to update Twitter handle.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -247,17 +249,19 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 text-[#3A332B] hover:text-[#262320] rounded-lg hover:bg-[#3A332B]/10 transition-colors font-bold"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {currentUser?.isConnected && currentUser?.twitter && (
+            <button
+              onClick={onClose}
+              className="p-2 text-[#3A332B] hover:text-[#262320] rounded-lg hover:bg-[#3A332B]/10 transition-colors font-bold"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Step Progress Bar */}
         <div className="flex gap-2 mb-6">
-          {[1, 2, 3].map((s) => (
+          {[1, 2].map((s) => (
             <div
               key={s}
               className={`h-2.5 flex-1 rounded-full transition-all border border-[#3A332B] ${
@@ -337,65 +341,12 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => handleSaveTwitter(false)}
+                onClick={handleSaveTwitter}
                 disabled={loading || !twitterHandle.trim()}
-                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
+                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? 'SAVING...' : 'SAVE & NEXT'}
-              </button>
-
-              <button
-                onClick={() => handleSaveTwitter(true)}
-                disabled={loading}
-                className="py-3 px-6 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white font-mono text-xs tracking-wider uppercase rounded-xl border border-stone-800 transition-colors"
-              >
-                SKIP FOR NOW
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: INVITE CODE */}
-        {step === 3 && (
-          <div className="space-y-6">
-            <div className="p-4 bg-stone-900/60 border border-stone-800 rounded-2xl">
-              <h3 className="font-heading text-lg text-amber-400 mb-2">
-                3. ADD INVITATION CODE (OPTIONAL)
-              </h3>
-              <p className="text-xs text-stone-300 font-sans leading-relaxed">
-                Got a referral code from a fellow Goblin? Enter it below to award <strong>+2 BONUS PULLS</strong> to both you and your referrer!
-              </p>
-            </div>
-
-            <div>
-              <label className="block font-mono text-xs text-stone-400 mb-2">
-                INVITATION CODE
-              </label>
-              <input
-                type="text"
-                placeholder="GOB-XXXX"
-                value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                className="w-full px-4 py-3 bg-stone-900 border-2 border-stone-800 rounded-xl text-parchment-100 font-mono text-sm uppercase focus:outline-none focus:border-amber-500 transition-colors"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleApplyInvite}
-                disabled={loading || !inviteCode.trim()}
-                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
-              >
-                {loading ? 'APPLYING...' : 'APPLY CODE (+2 PULLS)'}
-              </button>
-
-              <button
-                onClick={onClose}
-                disabled={loading}
-                className="py-3 px-6 bg-stone-900 hover:bg-stone-800 text-parchment-100 font-heading text-sm tracking-wider uppercase rounded-xl border border-stone-800 transition-colors flex items-center justify-center gap-2"
-              >
-                <span>ENTER CAVERN</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{loading ? 'SAVING...' : 'ENTER CAVERN'}</span>
+                {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
           </div>

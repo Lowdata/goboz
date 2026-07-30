@@ -52,7 +52,7 @@ export const INITIAL_DB_TASKS = [
     subtitle: 'Spread the meme. Like the tweet to show support.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
-    link: 'https://twitter.com/intent/like?tweet_id=2082134899067126023',
+    link: 'https://twitter.com/intent/like?tweet_id=2082938743262986374',
     type: 'social' as const
   },
   {
@@ -61,7 +61,7 @@ export const INITIAL_DB_TASKS = [
     subtitle: 'We gib. We grib. Repost to spread the virus.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
-    link: 'https://twitter.com/intent/retweet?tweet_id=2082134899067126023',
+    link: 'https://twitter.com/intent/retweet?tweet_id=2082938743262986374',
     type: 'social' as const
   },
   {

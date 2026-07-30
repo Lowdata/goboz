@@ -168,7 +168,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://twitter.com/intent/like?tweet_id=2082134899067126023',
+    link: 'https://twitter.com/intent/like?tweet_id=2082938743262986374',
     type: 'social'
   },
   {
@@ -178,7 +178,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://twitter.com/intent/retweet?tweet_id=2082134899067126023',
+    link: 'https://twitter.com/intent/retweet?tweet_id=2082938743262986374',
     type: 'social'
   },
   {

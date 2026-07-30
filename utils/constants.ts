@@ -163,7 +163,7 @@ export const INITIAL_TASKS: TaskItem[] = [
   },
   {
     id: 'like_tweet',
-    title: 'Like Collab Tweet',
+    title: 'Like Tweet',
     subtitle: 'Spread the meme. Like the tweet to show support.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
@@ -173,7 +173,7 @@ export const INITIAL_TASKS: TaskItem[] = [
   },
   {
     id: 'retweet_tweet',
-    title: 'Repost Collab Tweet',
+    title: 'Repost Tweet',
     subtitle: 'We gib. We grib. Repost to spread the virus.',
     rewardText: '+1 PULL',
     rewardPulls: 1,

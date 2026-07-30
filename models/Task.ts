@@ -48,7 +48,7 @@ export const INITIAL_DB_TASKS = [
   },
   {
     id: 'like_tweet',
-    title: 'Like Collab Tweet',
+    title: 'Like Tweet',
     subtitle: 'Spread the meme. Like the tweet to show support.',
     rewardText: '+1 PULL',
     rewardPulls: 1,

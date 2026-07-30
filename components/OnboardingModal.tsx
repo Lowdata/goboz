@@ -162,7 +162,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
     setLoading(true);
     try {
       if (!twitterHandle.trim()) {
-        throw new Error('Please provide your Twitter / X handle.');
+        toast.error('Enter a valid twitter account');
+        setLoading(false);
+        return;
       }
 
       const res = await fetch('/api/user', {
@@ -337,7 +339,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleSaveTwitter}
-                disabled={loading || !twitterHandle.trim()}
+                disabled={loading}
                 className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
               >
                 {loading ? 'SAVING...' : 'SAVE & NEXT'}

@@ -10,13 +10,15 @@ interface ReelProps {
   stopDelayMs: number;
   onReelStop?: () => void;
   reelIndex: number;
+  inMachineWindow?: boolean;
 }
 
 export const Reel: React.FC<ReelProps> = ({
   finalSymbolId,
   isSpinning,
   stopDelayMs,
-  onReelStop
+  onReelStop,
+  inMachineWindow = false
 }) => {
   const [currentSymbol, setCurrentSymbol] = useState<SymbolId>(finalSymbolId);
   const [isLocallySpinning, setIsLocallySpinning] = useState<boolean>(false);
@@ -29,13 +31,11 @@ export const Reel: React.FC<ReelProps> = ({
       const raf = requestAnimationFrame(() => {
         setIsLocallySpinning(true);
       });
-      // Rapidly cycle symbols to simulate spinning reels
       intervalId = setInterval(() => {
         const randIndex = Math.floor(Math.random() * SYMBOL_LIST.length);
         setCurrentSymbol(SYMBOL_LIST[randIndex].id);
       }, 70);
 
-      // Schedule stopping left, center, right in sequence (~400ms apart)
       stopTimeoutId = setTimeout(() => {
         if (intervalId) clearInterval(intervalId);
         setCurrentSymbol(finalSymbolId);
@@ -59,6 +59,36 @@ export const Reel: React.FC<ReelProps> = ({
       };
     }
   }, [isSpinning, finalSymbolId, stopDelayMs, onReelStop]);
+
+  if (inMachineWindow) {
+    return (
+      <div
+        className={`relative w-full h-full flex flex-col items-center justify-center overflow-hidden transition-all ${
+          isLocallySpinning
+            ? 'bg-[#E6DEC4] animate-pulse'
+            : 'bg-[#F4EFE6]'
+        }`}
+      >
+        {/* Top & Bottom cylinder shadow */}
+        <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#3A332B]/20 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-[#3A332B]/20 to-transparent z-10 pointer-events-none" />
+
+        {/* Spinning Symbol Icon */}
+        <div
+          className={`z-20 transition-all duration-75 flex flex-col items-center justify-center p-2 sm:p-3 ${
+            isLocallySpinning ? 'blur-[1px] scale-90 opacity-80' : 'scale-100 opacity-100'
+          }`}
+        >
+          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center">
+            <SymbolIcon symbolId={currentSymbol} size={64} showLabel={false} />
+          </div>
+          <span className="font-pixel text-[9px] sm:text-[10px] uppercase text-[#3A332B] mt-1 font-bold tracking-wider">
+            {SYMBOL_LIST.find((s) => s.id === currentSymbol)?.name}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -252,12 +252,6 @@ export default function GobbozHomePage() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:py-8">
         {/* Compact Title / Header Banner */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] border-2 border-[#3A332B] rounded-full mb-3 shadow-[2px_2px_0px_0px_#3A332B]">
-            <img src="/skullpixel-rmbg.png" alt="Skull" className="w-4 h-4 object-contain inline" />
-            <span className="font-pixel text-xs uppercase tracking-widest">
-              ONE-ARMED GOBLIN BANDIT
-            </span>
-          </div>
           <h1 className="font-heading text-4xl sm:text-6xl text-[#262320] uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(58,51,43,0.15)]">
             PULL THE LEVER. <span className="text-[#5D7C3B]">LOOT THE LIST.</span>
           </h1>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Reel } from './Reel';
-import { Lever } from './Lever';
 import { SymbolId, PullResult, UserState } from '@/types/game';
 import { sound } from '@/utils/sound';
 
@@ -88,13 +87,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Main Machine Casing */}
+      {/* Main Machine Housing Card */}
       <div className="relative w-full max-w-3xl bg-[#F7F2E4] border-4 border-[#3A332B] rounded-3xl p-3 sm:p-5 md:p-6 shadow-[8px_8px_0px_0px_#3A332B] overflow-hidden">
-        {/* Background Dungeon Skull Watermark */}
-        <div className="absolute right-4 top-4 w-32 h-32 opacity-10 pointer-events-none">
-          <img src="/skullpixel-rmbg.png" alt="" className="w-full h-full object-contain" />
-        </div>
-
         {/* Decorative corner rivets */}
         <div className="absolute top-3 left-3 w-3 h-3 bg-[#3A332B] rounded-full" />
         <div className="absolute top-3 right-3 w-3 h-3 bg-[#3A332B] rounded-full" />
@@ -103,9 +97,9 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
 
         {/* Header Marquee Banner */}
         <div className="w-full bg-[#5D7C3B] text-[#ECE3C6] border-2 border-[#3A332B] rounded-xl py-3 px-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[2px_2px_0px_0px_#3A332B]">
-          <div className="flex items-center gap-2">
-            <img src="/skullpixel-rmbg.png" alt="Gobboz Skull" className="w-6 h-6 object-contain" />
-            <span className="font-heading text-xs sm:text-sm tracking-wider font-bold">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src="/skull.png" alt="Gobboz Skull" className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow" />
+            <span className="font-heading text-sm sm:text-base tracking-wider font-bold">
               GOBBOZ ONE-ARMED BANDIT
             </span>
           </div>
@@ -128,68 +122,150 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           </div>
         </div>
 
-        {/* Center Slot Reels + Right Lever Container */}
-        <div className="flex flex-row items-center justify-center gap-2 sm:gap-4 md:gap-5 my-3 w-full">
-          {/* Reels Display Housing */}
-          <div className="relative bg-[#ECE3C6] border-4 border-[#3A332B] rounded-2xl p-3 sm:p-5 md:p-6 shadow-inner flex flex-col items-center w-full max-w-full">
-            {/* Payline Label Banner */}
-            <div className="absolute -top-3.5 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] font-pixel text-[10px] rounded-lg border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#3A332B] uppercase tracking-wider">
-              WINNING COMBOS PAY OUT
-            </div>
+        {/* Center Retro Slot Machine Graphic Asset Container with Integrated Lever */}
+        <div className="w-full flex flex-col items-center justify-center my-2">
+          <div 
+            className="relative w-full max-w-[620px] select-none mx-auto overflow-hidden sm:overflow-visible"
+            style={{ aspectRatio: '816 / 624' }}
+          >
+            {/* Layer 1: Base Machine Casing (Opaque Background) */}
+            <img
+              src="/slot-machine/slot-machine1.png"
+              alt="Gobboz Retro Slot Machine Base"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0"
+            />
 
-            {/* 3 Reels with ~0.4s sequential stop delay for suspense */}
-            <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mt-2 w-full">
+            {/* Layer 2: Three Reels Positioned Exactly Inside the Transparent Cutout Windows (z-10) */}
+            <div
+              className="absolute z-10"
+              style={{
+                top: '39.42%',
+                left: '28.06%',
+                width: '13.3%',
+                height: '33.65%'
+              }}
+            >
               <Reel
                 reelIndex={0}
                 finalSymbolId={targetSymbols[0]}
                 isSpinning={isSpinning}
                 stopDelayMs={800}
+                inMachineWindow={true}
               />
+            </div>
+
+            <div
+              className="absolute z-10"
+              style={{
+                top: '39.42%',
+                left: '44.00%',
+                width: '13.3%',
+                height: '33.65%'
+              }}
+            >
               <Reel
                 reelIndex={1}
                 finalSymbolId={targetSymbols[1]}
                 isSpinning={isSpinning}
                 stopDelayMs={1200}
+                inMachineWindow={true}
               />
+            </div>
+
+            <div
+              className="absolute z-10"
+              style={{
+                top: '39.42%',
+                left: '59.93%',
+                width: '13.3%',
+                height: '33.65%'
+              }}
+            >
               <Reel
                 reelIndex={2}
                 finalSymbolId={targetSymbols[2]}
                 isSpinning={isSpinning}
                 stopDelayMs={1600}
                 onReelStop={handleFinalReelStop}
+                inMachineWindow={true}
               />
             </div>
 
-            {/* Glowing Payline Indicator LEDs */}
-            <div className="w-full flex justify-between items-center mt-4 px-2">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#5D7C3B] border border-[#3A332B]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#C49B33] border border-[#3A332B]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#763D52] border border-[#3A332B]" />
-              </div>
-              <span className="font-pixel text-[10px] text-[#262320] font-bold">
-                MATCH 3x OR 2x TO LOOT
-              </span>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#763D52] border border-[#3A332B]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#C49B33] border border-[#3A332B]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#5D7C3B] border border-[#3A332B]" />
-              </div>
-            </div>
-          </div>
-
-          {/* Mechanical Lever Assembly */}
-          <div className="flex flex-col items-center justify-center">
-            <Lever
-              onPull={handleStartSpin}
-              disabled={
-                !userState.isConnected || userState.pullsRemaining <= 0
-              }
-              isSpinning={isSpinning}
+            {/* Layer 3: Slot Machine Frame with Transparent Reel Cutouts (z-20) */}
+            <img
+              src="/slot-machine/slot-machine4.png"
+              alt="Gobboz Retro Slot Machine Frame"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-20"
             />
-          </div>
-        </div>
 
+            {/* Layer 4: Glass Reflection Overlay ON TOP of Reels and Casing (z-30) */}
+            <img
+              src="/slot-machine/slot-machine5.png"
+              alt=""
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-30"
+            />
+
+            {/* Layer 5: Interactive Lever Overlay covering the whole machine (z-40) */}
+            <button
+              type="button"
+              onClick={() => {
+                sound.playLeverPull();
+                handleStartSpin();
+              }}
+              disabled={!userState.isConnected || userState.pullsRemaining <= 0 || isSpinning}
+              className={`absolute inset-0 w-full h-full z-40 focus:outline-none transition-transform appearance-none bg-transparent ${
+                !userState.isConnected || userState.pullsRemaining <= 0 || isSpinning
+                  ? 'cursor-not-allowed'
+                  : 'cursor-pointer active:scale-[0.99]'
+              }`}
+              title={
+                !userState.isConnected
+                  ? 'Connect wallet to spin'
+                  : userState.pullsRemaining <= 0
+                  ? 'No pulls remaining'
+                  : isSpinning
+                  ? 'Spinning...'
+                  : 'Click anywhere on machine to spin!'
+              }
+            >
+              <img
+                src={isSpinning ? '/slot-machine/slot-machine3.png' : '/slot-machine/slot-machine2.png'}
+                alt="Pull Lever"
+                className="w-full h-full object-contain pointer-events-none"
+              />
+            </button>
+          </div>
+
+          {/* Action Button Below Machine for Easy Mobile / Desktop Access */}
+          <button
+            type="button"
+            onClick={() => {
+              sound.playLeverPull();
+              handleStartSpin();
+            }}
+            disabled={!userState.isConnected || userState.pullsRemaining <= 0 || isSpinning}
+            className={`mt-4 w-full max-w-[260px] py-3.5 px-6 font-pixel text-xs sm:text-sm tracking-wider uppercase rounded-xl border-4 transition-all shadow-[4px_4px_0px_0px_#262320] flex items-center justify-center gap-2 ${
+              !userState.isConnected || userState.pullsRemaining <= 0
+                ? 'bg-[#E6DEC4] border-[#3A332B] text-[#3A332B] cursor-not-allowed opacity-70'
+                : isSpinning
+                ? 'bg-[#763D52] border-[#3A332B] text-[#ECE3C6] cursor-wait animate-pulse'
+                : 'bg-[#C49B33] hover:bg-[#B38D2C] border-[#3A332B] text-[#262320] active:translate-y-1'
+            }`}
+          >
+            {isSpinning ? (
+              <>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ECE3C6] animate-ping" />
+                <span>SPINNING REELS...</span>
+              </>
+            ) : !userState.isConnected ? (
+              <span>CONNECT WALLET TO PULL</span>
+            ) : userState.pullsRemaining <= 0 ? (
+              <span>NO PULLS REMAINING</span>
+            ) : (
+              <span>PULL LEVER TO LOOT</span>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

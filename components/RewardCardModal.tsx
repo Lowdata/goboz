@@ -102,20 +102,33 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
       ctx.font = '32px "Courier New", monospace';
       ctx.fillText('LEVER COMBO LANDED:', width / 2, 420);
 
-      // Symbols emojis & names
+      // Symbols names
       const symbolsText = result.symbols
-        .map((s) => `${SYMBOLS[s].emoji} ${SYMBOLS[s].name}`)
+        .map((s) => SYMBOLS[s].name)
         .join('  |  ');
       ctx.fillStyle = '#F5B82E';
       ctx.font = 'bold 30px "Courier New", monospace';
       ctx.fillText(symbolsText, width / 2, 490);
 
-      // Reward Description
+      // Tier description
       ctx.fillStyle = '#E2E8F0';
-      ctx.font = '26px "Courier New", monospace';
-      ctx.fillText(tier.description, width / 2, 600);
+      ctx.font = '28px "Courier New", monospace';
+      ctx.fillText(`Outcome: ${tier.description}`, width / 2, 570);
 
-      // Wallet Address & Timestamp
+      // Reward badge box
+      ctx.fillStyle = tier.bgColor;
+      ctx.strokeStyle = tier.borderColor;
+      ctx.lineWidth = 4;
+      const boxWidth = 620;
+      const boxHeight = 80;
+      ctx.fillRect((width - boxWidth) / 2, 610, boxWidth, boxHeight);
+      ctx.strokeRect((width - boxWidth) / 2, 610, boxWidth, boxHeight);
+
+      ctx.fillStyle = tier.color;
+      ctx.font = 'bold 32px "Courier New", monospace';
+      ctx.fillText(tier.rewardText, width / 2, 660);
+
+      // Looter address & timestamp
       ctx.fillStyle = '#94A3B8';
       ctx.font = '22px "Courier New", monospace';
       ctx.fillText(`Looter: ${result.walletAddress}`, width / 2, 740);
@@ -155,8 +168,8 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   };
 
   const handleShareToX = () => {
-    const symbolsText = result.symbols.map((s) => SYMBOLS[s].emoji).join(' ');
-    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${symbolsText} (${tier.title})!\n\n${tier.description}\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ. 💀🗡️\n\n#Gobboz #NFT #Allowlist`;
+    const symbolsText = result.symbols.map((s) => SYMBOLS[s].name).join(' | ');
+    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${symbolsText} (${tier.title})!\n\n${tier.description}\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT #Allowlist`;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
     window.open(shareUrl, '_blank');

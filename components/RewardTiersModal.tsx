@@ -74,7 +74,6 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{tier.emoji}</span>
                     <h3 className="font-heading text-lg sm:text-xl text-[#262320] tracking-wide font-bold">
                       {tier.title}
                     </h3>

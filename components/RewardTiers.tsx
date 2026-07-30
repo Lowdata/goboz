@@ -42,10 +42,6 @@ export const RewardTiers: React.FC = () => {
                 >
                   {tier.badge}
                 </span>
-
-                <span className="text-2xl" role="img" aria-label={tier.name}>
-                  {tier.emoji}
-                </span>
               </div>
 
               <h3

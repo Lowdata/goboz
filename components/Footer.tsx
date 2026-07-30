@@ -17,14 +17,6 @@ export const Footer: React.FC<FooterProps> = ({
     <footer className="w-full bg-[#E6DEC4] border-t-4 border-[#3A332B] text-[#262320] mt-16">
       {/* Big Hero Footer CTA Box */}
       <div className="max-w-5xl mx-auto px-4 py-14 text-center">
-        {/* Decorative Crown and Sword Artwork in Footer */}
-        <div className="flex justify-center mb-6">
-          <img
-            src="/crownandswordimage.png"
-            alt="Gobboz Crown and Sword"
-            className="w-28 sm:w-36 h-auto object-contain drop-shadow-[0_0_15px_rgba(58,51,43,0.3)] hover:scale-105 transition-transform"
-          />
-        </div>
 
         <div className="inline-flex items-center gap-2 px-4 py-1 bg-[#5D7C3B] text-[#ECE3C6] rounded-full mb-4 border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#3A332B]">
           <Sparkles className="w-4 h-4 text-[#F4C567]" />

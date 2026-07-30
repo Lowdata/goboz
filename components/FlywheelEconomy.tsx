@@ -111,7 +111,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
       <div className="bg-[#F7F2E4] border-2 border-[#3A332B] rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0px_0px_#3A332B]">
         <div className="bg-[#763D52] text-[#ECE3C6] px-3.5 py-2.5 rounded-xl border-2 border-[#3A332B] mb-4 flex items-center justify-between shadow-[2px_2px_0px_0px_#3A332B]">
           <h3 className="font-pixel text-xs sm:text-sm tracking-wider">
-            💀 EARN MORE PULLS (INTERACTIVE TASKS)
+            EARN MORE PULLS (INTERACTIVE TASKS)
           </h3>
           <span className="font-pixel text-[10px] text-[#ECE3C6]/90 hidden sm:inline">
             CLICK TO COMPLETE

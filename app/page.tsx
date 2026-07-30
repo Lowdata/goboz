@@ -231,6 +231,11 @@ export default function GobbozHomePage() {
     void handleCompleteTask('share_result', 1);
   };
 
+  const handleLossShareBonusClaimed = () => {
+    if (userState.completedTasks['share_loss']) return;
+    void handleCompleteTask('share_loss', 1);
+  };
+
   const scrollToMachine = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -353,6 +358,7 @@ export default function GobbozHomePage() {
         result={activeCardModalResult}
         onClose={() => setActiveCardModalResult(null)}
         onShareBonusClaimed={handleShareBonusClaimed}
+        onLossShareBonusClaimed={handleLossShareBonusClaimed}
         twitterHandle={userState.twitter}
         referralCode={userState.referralCode}
       />

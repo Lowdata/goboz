@@ -11,6 +11,7 @@ interface RewardCardModalProps {
   isOpen: boolean;
   onClose: () => void;
   onShareBonusClaimed: () => void;
+  onLossShareBonusClaimed: () => void;
   twitterHandle?: string;
   referralCode?: string;
 }
@@ -20,6 +21,7 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   isOpen,
   onClose,
   onShareBonusClaimed,
+  onLossShareBonusClaimed,
   twitterHandle,
   referralCode
 }) => {
@@ -73,10 +75,10 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
     
     const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
     
-    let tweetText = `Just pulled the @GobbozHQ lever and landed: ${tierText}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\nPlay now and get +1 pull with my link!\n${link}\n\n#Gobboz #NFT`;
+    let tweetText = `Just pulled the @GobbozHQ lever and landed: ${tierText}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\nPlay now and get +1 pull with my link!\n${link}`;
     
     if (result.tierId === 'no_match') {
-      tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}\n\n#Gobboz #NFT`;
+      tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}`;
     }
     
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
@@ -204,9 +206,10 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
               <button
                 onClick={() => {
                   const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
-                  const tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}\n\n#Gobboz #NFT`;
+                  const tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}`;
                   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
                   window.open(shareUrl, '_blank');
+                  onLossShareBonusClaimed();
                 }}
                 className="flex items-center justify-center gap-2 py-3.5 px-4 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] shadow-[#763D52]/50 animate-pulse active:translate-y-0.5 transition-all flex-shrink-0"
                 title="Invite a Friend"

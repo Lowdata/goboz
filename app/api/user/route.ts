@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest) {
         { $addToSet: { referredUsers: walletAddress }, $inc: { pullsLeft: 2 } },
         { new: true }
       );
-      if (!referrer) return NextResponse.json({ error: 'Invalid or already-used referral code.' }, { status: 400 });
+      if (!referrer) return NextResponse.json({ error: 'Invalid referral code.' }, { status: 400 });
       user.referredBy = referrer.walletAddress;
       user.pullsLeft += 1;
     }

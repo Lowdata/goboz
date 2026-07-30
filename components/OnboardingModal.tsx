@@ -193,7 +193,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   // STEP 3: Submit Invite Code
   const handleApplyInvite = async () => {
     if (!inviteCode.trim()) {
-      toast.error('Please enter a referral code.');
+      onClose();
       return;
     }
     setLoading(true);
@@ -376,19 +376,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleApplyInvite}
-                disabled={loading || !inviteCode.trim()}
-                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
-              >
-                {loading ? 'APPLYING...' : 'APPLY CODE (+1 PULL)'}
-              </button>
-
-              <button
-                onClick={onClose}
                 disabled={loading}
-                className="py-3 px-6 bg-stone-900 hover:bg-stone-800 text-parchment-100 font-heading text-sm tracking-wider uppercase rounded-xl border border-stone-800 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 bg-amber-500 hover:bg-amber-400 text-stone-950 font-heading text-sm tracking-widest uppercase rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 flex justify-center items-center gap-2"
               >
-                <span>ENTER CAVERN</span>
-                <ArrowRight className="w-4 h-4" />
+                {loading ? 'PROCESSING...' : (inviteCode.trim() ? 'APPLY CODE & ENTER' : 'SKIP & ENTER CAVERN')}
+                {!inviteCode.trim() && !loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
           </div>

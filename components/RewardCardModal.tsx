@@ -62,18 +62,27 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   };
 
   const handleShareToX = async () => {
-    const tier = OUTCOME_TIERS[result.tierId];
+    let tierText = '';
+    if (result.tierId === 'guaranteed_wl' || result.tierId === 'triple_gem') {
+      tierText = 'GUARANTEED WHITELIST';
+    } else if (result.tierId === 'fcfs_raffle') {
+      tierText = 'FIRST COME FIRST SERVE';
+    } else {
+      tierText = OUTCOME_TIERS[result.tierId].title;
+    }
     
-    let tweetText = `Just pulled the @GobbozHQ lever and landed: ${tier.title}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT`;
+    const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
+    
+    let tweetText = `Just pulled the @GobbozHQ lever and landed: ${tierText}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\nPlay now and get +1 pull with my link!\n${link}\n\n#Gobboz #NFT`;
     
     if (result.tierId === 'no_match') {
-      const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
       tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}\n\n#Gobboz #NFT`;
     }
     
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     
     window.open(shareUrl, '_blank');
+    onShareBonusClaimed();
   };
 
   const walletDisplay = `${result.walletAddress.substring(0, 6)}...${result.walletAddress.substring(result.walletAddress.length - 4)}`;
@@ -167,37 +176,38 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
         </div>
 
         {/* Buttons Container */}
-          <div className="w-full flex flex-row md:flex-col justify-center gap-4 md:max-w-xs mt-6 md:mt-0">
-            <button
-              onClick={handleShareToX}
-              className="w-14 h-14 md:w-full md:h-auto flex items-center justify-center gap-2 md:py-3.5 md:px-4 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-full md:rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all flex-shrink-0"
-              title="Share to X"
-            >
-              <Share2 className="w-5 h-5 md:w-4 md:h-4" />
-              <span className="hidden md:inline">SHARE TO X</span>
-            </button>
+          <div className="w-full flex flex-row md:flex-col items-center md:items-start justify-center md:justify-center gap-4 md:max-w-xs mt-6 md:mt-0">
+            <div className="flex flex-row gap-4">
+              <button
+                onClick={handleShareToX}
+                className="w-14 h-14 flex items-center justify-center bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] rounded-full shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all flex-shrink-0"
+                title="Share to X"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
 
-            <button
-              onClick={handleDownloadPng}
-              className="w-14 h-14 md:w-full md:h-auto flex items-center justify-center gap-2 md:py-3.5 md:px-4 bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-full md:rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all flex-shrink-0"
-              title="Download Collectible Card"
-            >
-              <Download className="w-5 h-5 md:w-4 md:h-4 text-[#262320]" />
-              <span className="hidden md:inline">DOWNLOAD COLLECTIBLE CARD</span>
-            </button>
+              <button
+                onClick={handleDownloadPng}
+                className="w-14 h-14 flex items-center justify-center bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] border-2 border-[#3A332B] rounded-full shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all flex-shrink-0"
+                title="Download Collectible Card"
+              >
+                <Download className="w-5 h-5 text-[#262320]" />
+              </button>
+            </div>
 
             {result.tierId === 'no_match' && (
               <button
                 onClick={() => {
                   const link = referralCode ? `${window.location.origin}/?ref=${referralCode}` : window.location.origin;
-                  navigator.clipboard.writeText(link);
-                  toast.success("Referral link copied!");
+                  const tweetText = `Just pulled the @GobbozHQ lever and got absolutely nothing. The machine takes, and the machine laughs. 💀\n\nTry your luck and get +1 pull with my referral link!\n${link}\n\n#Gobboz #NFT`;
+                  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                  window.open(shareUrl, '_blank');
                 }}
-                className="w-14 h-14 md:w-full md:h-auto flex items-center justify-center gap-2 md:py-3.5 md:px-4 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-full md:rounded-xl shadow-[4px_4px_0px_0px_#262320] shadow-[#763D52]/50 animate-pulse active:translate-y-0.5 transition-all flex-shrink-0"
-                title="Copy Referral Link"
+                className="flex items-center justify-center gap-2 py-3.5 px-4 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] shadow-[#763D52]/50 animate-pulse active:translate-y-0.5 transition-all flex-shrink-0"
+                title="Invite a Friend"
               >
-                <Sparkles className="w-5 h-5 md:w-4 md:h-4" />
-                <span className="hidden md:inline">COPY REFERRAL LINK (+1 PULL)</span>
+                <Sparkles className="w-5 h-5" />
+                <span>INVITE A FRIEND (+1 PULL)</span>
               </button>
             )}
           </div>

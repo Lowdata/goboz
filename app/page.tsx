@@ -11,6 +11,7 @@ import { RewardTiersModal } from '@/components/RewardTiersModal';
 import { HowItWorksModal } from '@/components/HowItWorksModal';
 import { PullHistoryModal } from '@/components/PullHistoryModal';
 import { RewardCardModal } from '@/components/RewardCardModal';
+import { ReferAFriendModal } from '@/components/ReferAFriendModal';
 import { ParchmentWatermarks } from '@/components/ParchmentWatermarks';
 
 export default function GobbozHomePage() {
@@ -34,6 +35,7 @@ export default function GobbozHomePage() {
   const [isRewardTiersModalOpen, setIsRewardTiersModalOpen] = useState(false);
   const [isHowItWorksModalOpen, setIsHowItWorksModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isReferModalOpen, setIsReferModalOpen] = useState(false);
   const [activeCardModalResult, setActiveCardModalResult] =
     useState<PullResult | null>(null);
 
@@ -293,6 +295,7 @@ export default function GobbozHomePage() {
                 setIsOnboardingModalOpen(true);
               }}
               onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
+              onRequireReferral={() => setIsReferModalOpen(true)}
             />
           </div>
         </div>
@@ -327,6 +330,13 @@ export default function GobbozHomePage() {
       <RewardTiersModal
         isOpen={isRewardTiersModalOpen}
         onClose={() => setIsRewardTiersModalOpen(false)}
+      />
+
+      {/* Refer A Friend Modal */}
+      <ReferAFriendModal
+        isOpen={isReferModalOpen}
+        onClose={() => setIsReferModalOpen(false)}
+        referralCode={userState.referralCode}
       />
 
       {/* Parchment Pull History Modal */}

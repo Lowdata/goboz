@@ -158,7 +158,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://x.com/gobbozhq',
+    link: 'https://twitter.com/intent/follow?screen_name=GobbozHQ',
     type: 'social'
   },
   {
@@ -168,7 +168,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://x.com/gobbozhq/status/2082134899067126023',
+    link: 'https://twitter.com/intent/retweet?tweet_id=2082134899067126023',
     type: 'social'
   },
   {

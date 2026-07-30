@@ -9,6 +9,7 @@ interface SlotMachineProps {
   onOpenConnectModal: () => void;
   onRequireTwitter?: () => void;
   onOpenRewardTiersModal?: () => void;
+  onRequireReferral?: () => void;
 }
 
 export const SlotMachine: React.FC<SlotMachineProps> = ({
@@ -16,7 +17,8 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
   onPullCompleted,
   onOpenConnectModal,
   onRequireTwitter,
-  onOpenRewardTiersModal
+  onOpenRewardTiersModal,
+  onRequireReferral
 }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [targetSymbols, setTargetSymbols] = useState<[SymbolId, SymbolId, SymbolId]>([
@@ -32,7 +34,14 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       return;
     }
 
-    if (userState.pullsRemaining <= 0 || isSpinning) return;
+    if (userState.pullsRemaining <= 0) {
+      if (onRequireReferral) {
+        onRequireReferral();
+      }
+      return;
+    }
+
+    if (isSpinning) return;
 
     setIsSpinning(true);
     setPendingResult(null);
@@ -202,12 +211,16 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
             <button
               type="button"
               onClick={() => {
+                if (userState.isConnected && userState.pullsRemaining <= 0) {
+                  if (onRequireReferral) onRequireReferral();
+                  return;
+                }
                 sound.playLeverPull();
                 handleStartSpin();
               }}
-              disabled={!userState.isConnected || userState.pullsRemaining <= 0 || isSpinning}
+              disabled={isSpinning || !userState.isConnected}
               className={`absolute inset-0 w-full h-full z-40 focus:outline-none transition-transform appearance-none bg-transparent ${
-                !userState.isConnected || userState.pullsRemaining <= 0 || isSpinning
+                !userState.isConnected || isSpinning
                   ? 'cursor-not-allowed'
                   : 'cursor-pointer active:scale-[0.99]'
               }`}
@@ -233,16 +246,22 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
           <button
             type="button"
             onClick={() => {
+              if (userState.isConnected && userState.pullsRemaining <= 0) {
+                if (onRequireReferral) onRequireReferral();
+                return;
+              }
               sound.playLeverPull();
               handleStartSpin();
             }}
-            disabled={!userState.isConnected || userState.pullsRemaining <= 0 || isSpinning}
+            disabled={isSpinning || !userState.isConnected}
             className={`mt-4 w-full max-w-[260px] py-3.5 px-6 font-pixel text-xs sm:text-sm tracking-wider uppercase rounded-xl border-4 transition-all shadow-[4px_4px_0px_0px_#262320] flex items-center justify-center gap-2 ${
-              !userState.isConnected || userState.pullsRemaining <= 0
+              !userState.isConnected
                 ? 'bg-[#E6DEC4] border-[#3A332B] text-[#3A332B] cursor-not-allowed opacity-70'
                 : isSpinning
                 ? 'bg-[#763D52] border-[#3A332B] text-[#ECE3C6] cursor-wait animate-pulse'
-                : 'bg-[#C49B33] hover:bg-[#B38D2C] border-[#3A332B] text-[#262320] active:translate-y-1'
+                : userState.pullsRemaining <= 0
+                ? 'bg-[#E6DEC4] hover:bg-[#D5CCB4] border-[#3A332B] text-[#3A332B] active:translate-y-1 cursor-pointer'
+                : 'bg-[#C49B33] hover:bg-[#B38D2C] border-[#3A332B] text-[#262320] active:translate-y-1 cursor-pointer'
             }`}
           >
             {isSpinning ? (

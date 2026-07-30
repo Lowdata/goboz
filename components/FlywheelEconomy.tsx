@@ -83,7 +83,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
             <span className="font-pixel text-sm text-[#5D7C3B] font-bold">+1 FREE PULL</span>
           </div>
         </div>
-        <div className="bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 flex flex-col justify-between shadow-[4px_4px_0px_0px_#3A332B] transition-all">
+        <div className="relative bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 flex flex-col justify-between shadow-[4px_4px_0px_0px_#3A332B] hover:shadow-[4px_4px_0px_0px_#763D52] hover:border-[#763D52] transition-all ring-4 ring-[#763D52]/40 animate-pulse">
           <div>
             <span className="font-pixel text-xs text-[#763D52] font-bold uppercase tracking-wider block mb-1">
               REFER A FRIEND
@@ -96,7 +96,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
             <span className="font-pixel text-sm text-[#763D52] font-bold">+2 PULLS</span>
             <button
               onClick={handleCopyReferral}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-[#ECE3C6] hover:bg-[#E2D8B9] text-[#262320] border border-[#3A332B] rounded text-[10px] font-pixel shadow-[1px_1px_0px_0px_#3A332B] transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-[#ECE3C6] hover:bg-[#E2D8B9] text-[#262320] border border-[#3A332B] rounded text-[10px] font-pixel shadow-[2px_2px_0px_0px_#763D52] transition-all active:translate-y-0.5"
             >
               <Copy className="w-3.5 h-3.5 text-[#5D7C3B]" />
               <span>{userState.referralCode ? `CODE: ${userState.referralCode}` : 'COPY LINK'}</span>

@@ -78,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Sound Toggle Button */}
           <button
-            onClick={onToggleSound}
+            onClick={handleSoundToggle}
             className="p-1.5 bg-[#F7F2E4] hover:bg-[#EBE3CA] text-[#262320] border-2 border-[#3A332B] rounded-lg transition-all shadow-[2px_2px_0px_0px_#262320]"
             title={userState.soundEnabled ? 'Mute sound' : 'Unmute sound'}
           >

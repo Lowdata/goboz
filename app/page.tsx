@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { UserState, PullResult } from '@/types/game';
+import { UserState, PullResult, TaskItem } from '@/types/game';
 import { Navbar } from '@/components/Navbar';
 import { SlotMachine } from '@/components/SlotMachine';
 import { FlywheelEconomy } from '@/components/FlywheelEconomy';
@@ -36,7 +36,7 @@ export default function GobbozHomePage() {
   const [activeCardModalResult, setActiveCardModalResult] =
     useState<PullResult | null>(null);
 
-  const [dbTasks, setDbTasks] = useState<any[]>([]);
+  const [dbTasks, setDbTasks] = useState<TaskItem[]>([]);
 
   // Fetch tasks from MongoDB on initial load
   useEffect(() => {
@@ -65,29 +65,31 @@ export default function GobbozHomePage() {
         );
         if (res.ok) {
           const data = await res.json();
-          const tasksObj: Record<string, boolean> = { ...userState.completedTasks };
-          if (Array.isArray(data.completedTasks)) {
-            data.completedTasks.forEach((t: string) => {
-              tasksObj[t] = true;
-            });
-          } else if (data.completedTasks && typeof data.completedTasks === 'object') {
-            Object.assign(tasksObj, data.completedTasks);
-          }
+          setUserState((prev) => {
+            const tasksObj: Record<string, boolean> = { ...prev.completedTasks };
+            if (Array.isArray(data.completedTasks)) {
+              data.completedTasks.forEach((t: string) => {
+                tasksObj[t] = true;
+              });
+            } else if (data.completedTasks && typeof data.completedTasks === 'object') {
+              Object.assign(tasksObj, data.completedTasks);
+            }
 
-          setUserState((prev) => ({
-            ...prev,
-            isConnected: true,
-            pullsRemaining:
-              data.pullsLeft !== undefined
-                ? data.pullsLeft
-                : prev.pullsRemaining,
-            twitter: data.twitterHandle || data.twitter || prev.twitter,
-            referralCode: data.referralCode || prev.referralCode,
-            completedTasks:
-              Object.keys(tasksObj).length > 0
-                ? tasksObj
-                : prev.completedTasks
-          }));
+            return {
+              ...prev,
+              isConnected: true,
+              pullsRemaining:
+                data.pullsLeft !== undefined
+                  ? data.pullsLeft
+                  : prev.pullsRemaining,
+              twitter: data.twitterHandle || data.twitter || prev.twitter,
+              referralCode: data.referralCode || prev.referralCode,
+              completedTasks:
+                Object.keys(tasksObj).length > 0
+                  ? tasksObj
+                  : prev.completedTasks
+            };
+          });
         }
       } catch (err) {
         console.error('Failed to fetch user state:', err);
@@ -97,7 +99,18 @@ export default function GobbozHomePage() {
     fetchUserState();
   }, [userState.isConnected, userState.walletAddress]);
 
-  const handleOnboardingSuccess = (userData: any) => {
+  interface OnboardingResult {
+    walletAddress?: string | null;
+    twitter?: string;
+    twitterHandle?: string;
+    pullsLeft?: number;
+    pullsRemaining?: number;
+    referralCode?: string;
+    referredUsers?: string[];
+    completedTasks?: string[] | Record<string, boolean>;
+  }
+
+  const handleOnboardingSuccess = (userData: OnboardingResult) => {
     const tasksObj: Record<string, boolean> = { ...userState.completedTasks };
     if (Array.isArray(userData.completedTasks)) {
       userData.completedTasks.forEach((t: string) => {

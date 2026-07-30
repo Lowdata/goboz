@@ -2,7 +2,7 @@ import React from 'react';
 import { PullResult } from '@/types/game';
 import { OUTCOME_TIERS } from '@/utils/constants';
 import { SymbolIcon } from './SymbolIcon';
-import { History, Share2, X } from 'lucide-react';
+import { History, Share2 } from 'lucide-react';
 
 interface PullHistoryModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wallet, PlayCircle, Trophy, X } from 'lucide-react';
+import { Wallet, PlayCircle, Trophy } from 'lucide-react';
 
 interface HowItWorksModalProps {
   isOpen: boolean;

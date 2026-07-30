@@ -35,7 +35,7 @@ export const HowItWorks: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {steps.map((item, index) => (
+        {steps.map((item) => (
           <div
             key={item.step}
             className="relative bg-stone-900/90 border-4 border-stone-800 hover:border-amber-500/60 rounded-2xl p-6 transition-all group hover:-translate-y-1 shadow-xl"

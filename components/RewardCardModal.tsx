@@ -4,7 +4,7 @@ import { SYMBOLS, OUTCOME_TIERS } from '@/utils/constants';
 import { SymbolIcon } from './SymbolIcon';
 import { GoblinAvatar } from './GoblinAvatar';
 import confetti from 'canvas-confetti';
-import { Download, Share2, X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Download, Share2, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface RewardCardModalProps {
   result: PullResult | null;
@@ -25,7 +25,9 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   useEffect(() => {
     if (!isOpen || !result) return;
 
-    setIsShareClaimed(false);
+    const raf = requestAnimationFrame(() => {
+      setIsShareClaimed(false);
+    });
 
     // Trigger confetti on Jackpot or Guaranteed WL!
     if (result.tierId === 'triple_gem' || result.tierId === 'guaranteed_wl') {
@@ -130,6 +132,10 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
     };
 
     renderCanvasCard();
+
+    return () => {
+      cancelAnimationFrame(raf);
+    };
   }, [isOpen, result]);
 
   if (!isOpen || !result) return null;

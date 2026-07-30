@@ -1,14 +1,24 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, ShieldCheck, Sparkles, AlertCircle, Check, ArrowRight } from 'lucide-react';
+import { X, AlertCircle, Check, ArrowRight } from 'lucide-react';
+import { UserState } from '@/types/game';
+
+interface EthereumProvider {
+  request<T = unknown>(args: { method: string; params?: unknown[] }): Promise<T>;
+}
+declare global {
+  interface Window {
+    ethereum?: EthereumProvider;
+  }
+}
 
 interface OnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (user: any) => void;
+  onSuccess: (user: Record<string, unknown>) => void;
   initialStep?: number;
-  currentUser?: any;
+  currentUser?: Partial<UserState> | null;
 }
 
 export const OnboardingModal: React.FC<OnboardingModalProps> = ({
@@ -19,7 +29,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   currentUser = null
 }) => {
   const [step, setStep] = useState<number>(initialStep);
-  const [walletAddress, setWalletAddress] = useState<string>(currentUser?.walletAddress || '');
   const [twitterHandle, setTwitterHandle] = useState<string>(currentUser?.twitter || '');
   const [inviteCode, setInviteCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,17 +37,17 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setStep(initialStep);
-      setError(null);
-      setSuccessMsg(null);
-      if (currentUser?.walletAddress) {
-        setWalletAddress(currentUser.walletAddress);
-      }
-      if (currentUser?.twitter) {
-        setTwitterHandle(currentUser.twitter);
-      }
+      const raf = requestAnimationFrame(() => {
+        setStep(initialStep);
+        setError(null);
+        setSuccessMsg(null);
+        if (currentUser?.twitter) {
+          setTwitterHandle(currentUser.twitter);
+        }
+      });
+      return () => cancelAnimationFrame(raf);
     }
-  }, [isOpen, initialStep]);
+  }, [isOpen, initialStep, currentUser]);
 
   if (!isOpen) return null;
 
@@ -58,15 +67,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       if (!res.ok) {
         throw new Error(data.error || 'Failed to connect wallet.');
       }
-      setWalletAddress(data.walletAddress);
       onSuccess({ ...data, isConnected: true });
       if (data.isExistingUser || (data.twitter && data.twitter.trim() !== '')) {
         onClose();
         return;
       }
       setStep(2);
-    } catch (err: any) {
-      setError(err.message || 'Failed to connect demo wallet.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to connect demo wallet.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -78,15 +87,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
     setError(null);
     try {
       let address = '';
-      if (typeof window !== 'undefined' && (window as any).ethereum) {
+      if (typeof window !== 'undefined' && window.ethereum) {
         try {
-          const accounts = await (window as any).ethereum.request({
+          const accounts = await window.ethereum.request<string[]>({
             method: 'eth_requestAccounts'
           });
-          if (accounts && accounts.length > 0) {
+          if (Array.isArray(accounts) && accounts.length > 0) {
             address = accounts[0];
           }
-        } catch (reqErr) {
+        } catch {
           // If request fails or user cancels, fallback to instant connect
           return await handleInstantDemoConnect();
         }
@@ -107,11 +116,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       
       let signature = 'DEMO_SIGNATURE';
       try {
-        signature = await (window as any).ethereum.request({
-          method: 'personal_sign',
-          params: [challenge.message, address]
-        });
-      } catch (signErr) {
+        if (window.ethereum) {
+          signature = await window.ethereum.request<string>({
+            method: 'personal_sign',
+            params: [challenge.message, address]
+          });
+        }
+      } catch {
         // If user cancels signing or personal_sign fails, bypass seamlessly
         signature = 'BYPASS_SIGNATURE';
       }
@@ -127,14 +138,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         throw new Error(data.error || 'Failed to connect wallet.');
       }
 
-      setWalletAddress(data.walletAddress);
       onSuccess({ ...data, isConnected: true });
       if (data.isExistingUser || (data.twitter && data.twitter.trim() !== '')) {
         onClose();
         return;
       }
       setStep(2);
-    } catch (err: any) {
+    } catch {
       // If anything fails, fallback to instant demo wallet so connection always succeeds
       await handleInstantDemoConnect();
     } finally {
@@ -166,8 +176,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
       onSuccess({ ...data, isConnected: true });
       setStep(3);
-    } catch (err: any) {
-      setError(err.message || 'Failed to update Twitter handle.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update Twitter handle.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -201,8 +212,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       setTimeout(() => {
         onClose();
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || 'Failed to apply referral code.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to apply referral code.';
+      setError(message);
     } finally {
       setLoading(false);
     }

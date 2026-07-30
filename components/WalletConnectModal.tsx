@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Wallet, Sparkles, Shield, ArrowRight } from 'lucide-react';
+import { X, Wallet, Shield, ArrowRight } from 'lucide-react';
 import { sound } from '@/utils/sound';
 
 interface WalletConnectModalProps {

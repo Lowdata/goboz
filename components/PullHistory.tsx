@@ -1,8 +1,8 @@
 import React from 'react';
 import { PullResult } from '@/types/game';
-import { SYMBOLS, OUTCOME_TIERS } from '@/utils/constants';
+import { OUTCOME_TIERS } from '@/utils/constants';
 import { SymbolIcon } from './SymbolIcon';
-import { History, Share2, Sparkles } from 'lucide-react';
+import { History, Share2 } from 'lucide-react';
 
 interface PullHistoryProps {
   history: PullResult[];

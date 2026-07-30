@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SymbolId } from '@/types/game';
-import { SYMBOLS, SYMBOL_LIST } from '@/utils/constants';
+import { SYMBOL_LIST } from '@/utils/constants';
 import { SymbolIcon } from './SymbolIcon';
 import { sound } from '@/utils/sound';
 
@@ -16,8 +16,7 @@ export const Reel: React.FC<ReelProps> = ({
   finalSymbolId,
   isSpinning,
   stopDelayMs,
-  onReelStop,
-  reelIndex
+  onReelStop
 }) => {
   const [currentSymbol, setCurrentSymbol] = useState<SymbolId>(finalSymbolId);
   const [isLocallySpinning, setIsLocallySpinning] = useState<boolean>(false);
@@ -27,7 +26,9 @@ export const Reel: React.FC<ReelProps> = ({
     let stopTimeoutId: NodeJS.Timeout | null = null;
 
     if (isSpinning) {
-      setIsLocallySpinning(true);
+      const raf = requestAnimationFrame(() => {
+        setIsLocallySpinning(true);
+      });
       // Rapidly cycle symbols to simulate spinning reels
       intervalId = setInterval(() => {
         const randIndex = Math.floor(Math.random() * SYMBOL_LIST.length);
@@ -42,18 +43,22 @@ export const Reel: React.FC<ReelProps> = ({
         sound.playReelStop();
         if (onReelStop) onReelStop();
       }, stopDelayMs);
+
+      return () => {
+        cancelAnimationFrame(raf);
+        if (intervalId) clearInterval(intervalId);
+        if (stopTimeoutId) clearTimeout(stopTimeoutId);
+      };
     } else {
-      setIsLocallySpinning(false);
-      setCurrentSymbol(finalSymbolId);
+      const raf = requestAnimationFrame(() => {
+        setIsLocallySpinning(false);
+        setCurrentSymbol(finalSymbolId);
+      });
+      return () => {
+        cancelAnimationFrame(raf);
+      };
     }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (stopTimeoutId) clearTimeout(stopTimeoutId);
-    };
   }, [isSpinning, finalSymbolId, stopDelayMs, onReelStop]);
-
-  const symbolData = SYMBOLS[currentSymbol];
 
   return (
     <div

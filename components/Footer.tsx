@@ -75,9 +75,6 @@ export const Footer: React.FC<FooterProps> = ({
             <a href="https://x.com/gobbozhq" target="_blank" rel="noreferrer" className="hover:text-[#5D7C3B] transition-colors">
               TWITTER / X
             </a>
-            <a href="https://discord.gg/gobboz" target="_blank" rel="noreferrer" className="hover:text-[#5D7C3B] transition-colors">
-              DISCORD
-            </a>
             <span className="text-[#ECE3C6]/50">© 2026 GOBBOZ TRIBE</span>
           </div>
         </div>

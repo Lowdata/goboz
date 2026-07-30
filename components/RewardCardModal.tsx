@@ -1,25 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PullResult } from '@/types/game';
-import { SYMBOLS, OUTCOME_TIERS } from '@/utils/constants';
-import { SymbolIcon } from './SymbolIcon';
-import { GoblinAvatar } from './GoblinAvatar';
+import { OUTCOME_TIERS } from '@/utils/constants';
 import confetti from 'canvas-confetti';
 import { Download, Share2, Sparkles, CheckCircle2 } from 'lucide-react';
+import * as htmlToImage from 'html-to-image';
 
 interface RewardCardModalProps {
   result: PullResult | null;
   isOpen: boolean;
   onClose: () => void;
   onShareBonusClaimed: () => void;
+  twitterHandle?: string;
 }
 
 export const RewardCardModal: React.FC<RewardCardModalProps> = ({
   result,
   isOpen,
   onClose,
-  onShareBonusClaimed
+  onShareBonusClaimed,
+  twitterHandle
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [isShareClaimed, setIsShareClaimed] = useState(false);
 
   useEffect(() => {
@@ -29,7 +30,6 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
       setIsShareClaimed(false);
     });
 
-    // Trigger confetti on Jackpot or Guaranteed WL!
     if (result.tierId === 'triple_gem' || result.tierId === 'guaranteed_wl') {
       try {
         confetti({
@@ -38,138 +38,36 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
           origin: { y: 0.6 },
           colors: ['#F5B82E', '#38BDF8', '#10B981', '#FACC15']
         });
-      } catch {
-        // ignore if canvas-confetti fails
-      }
+      } catch {}
     }
 
-    // Render Canvas Reward Card for PNG download
-    const renderCanvasCard = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const width = 800;
-      const height = 1000;
-      canvas.width = width;
-      canvas.height = height;
-
-      // Card Background
-      const tier = OUTCOME_TIERS[result.tierId];
-      ctx.fillStyle = '#18181B'; // dark zinc
-      ctx.fillRect(0, 0, width, height);
-
-      // Tribal Border
-      ctx.strokeStyle = '#4A3C31';
-      ctx.lineWidth = 16;
-      ctx.strokeRect(16, 16, width - 32, height - 32);
-
-      // Inner gold/tier border
-      ctx.strokeStyle = tier.color;
-      ctx.lineWidth = 6;
-      ctx.strokeRect(32, 32, width - 64, height - 64);
-
-      // Header Title
-      ctx.fillStyle = '#F4EFE6';
-      ctx.font = 'bold 52px "Courier New", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('GOBBOZ LOOT MACHINE', width / 2, 110);
-
-      // Subheader Motto
-      ctx.fillStyle = '#A3E635';
-      ctx.font = '28px "Courier New", monospace';
-      ctx.fillText('WE GIB. WE GRIB. WE GOBBOZ.', width / 2, 160);
-
-      // Tier Title Banner
-      ctx.fillStyle = tier.color;
-      ctx.font = 'bold 44px "Courier New", monospace';
-      ctx.fillText(tier.title.toUpperCase(), width / 2, 260);
-
-      // Badge Box
-      ctx.fillStyle = tier.bgColor;
-      ctx.fillRect(width / 2 - 240, 290, 480, 50);
-      ctx.strokeStyle = tier.color;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(width / 2 - 240, 290, 480, 50);
-
-      ctx.fillStyle = tier.color;
-      ctx.font = 'bold 24px "Courier New", monospace';
-      ctx.fillText(tier.badge, width / 2, 323);
-
-      // Symbols Section Header
-      ctx.fillStyle = '#F4EFE6';
-      ctx.font = '32px "Courier New", monospace';
-      ctx.fillText('LEVER COMBO LANDED:', width / 2, 420);
-
-      // Symbols names
-      const symbolsText = result.symbols
-        .map((s) => SYMBOLS[s].name)
-        .join('  |  ');
-      ctx.fillStyle = '#F5B82E';
-      ctx.font = 'bold 30px "Courier New", monospace';
-      ctx.fillText(symbolsText, width / 2, 490);
-
-      // Tier description
-      ctx.fillStyle = '#E2E8F0';
-      ctx.font = '28px "Courier New", monospace';
-      ctx.fillText(`Outcome: ${tier.description}`, width / 2, 570);
-
-      // Reward badge box
-      ctx.fillStyle = tier.bgColor;
-      ctx.strokeStyle = tier.borderColor;
-      ctx.lineWidth = 4;
-      const boxWidth = 620;
-      const boxHeight = 80;
-      ctx.fillRect((width - boxWidth) / 2, 610, boxWidth, boxHeight);
-      ctx.strokeRect((width - boxWidth) / 2, 610, boxWidth, boxHeight);
-
-      ctx.fillStyle = tier.color;
-      ctx.font = 'bold 32px "Courier New", monospace';
-      ctx.fillText(tier.rewardText, width / 2, 660);
-
-      // Looter address & timestamp
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '22px "Courier New", monospace';
-      ctx.fillText(`Looter: ${result.walletAddress}`, width / 2, 740);
-
-      const dateStr = new Date(result.timestamp).toLocaleDateString();
-      ctx.fillText(`Claimed On: ${dateStr}`, width / 2, 780);
-
-      // Footer Motto
-      ctx.fillStyle = '#713F12';
-      ctx.fillRect(40, height - 120, width - 80, 60);
-      ctx.fillStyle = '#F4EFE6';
-      ctx.font = 'bold 26px "Courier New", monospace';
-      ctx.fillText('GIB SHINY. KRUMP HUMIES. JOIN DA TRIBE.', width / 2, height - 82);
-    };
-
-    renderCanvasCard();
-
-    return () => {
-      cancelAnimationFrame(raf);
-    };
+    return () => cancelAnimationFrame(raf);
   }, [isOpen, result]);
 
   if (!isOpen || !result) return null;
 
-  const tier = OUTCOME_TIERS[result.tierId];
-
-  const handleDownloadPng = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = `gobboz-loot-${result.tierId}-${Date.now()}.png`;
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownloadPng = async () => {
+    if (!cardRef.current) return;
+    try {
+      const dataUrl = await htmlToImage.toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: 'transparent'
+      });
+      const link = document.createElement('a');
+      link.download = `gobboz-loot-${result.tierId}-${Date.now()}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Failed to generate image', err);
+    }
   };
 
   const handleShareToX = () => {
-    const symbolsText = result.symbols.map((s) => SYMBOLS[s].name).join(' | ');
-    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${symbolsText} (${tier.title})!\n\n${tier.description}\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT #Allowlist`;
+    const tier = OUTCOME_TIERS[result.tierId];
+    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${tier.title}!\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ.\n\n#Gobboz #NFT`;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
     window.open(shareUrl, '_blank');
@@ -180,134 +78,120 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
     }
   };
 
+  const walletDisplay = `${result.walletAddress.substring(0, 6)}...${result.walletAddress.substring(result.walletAddress.length - 4)}`;
+
+  let artSrc = '/art-loss.png';
+  let title = twitterHandle ? (twitterHandle.startsWith('@') ? twitterHandle : `@${twitterHandle}`) : walletDisplay;
+  let typeLine = 'NOTHING · EMPTY HANDED';
+  let symbolIcon = '/skull.png';
+  let rulesText = 'This goblin pulled the lever and got absolutely nothing. The machine takes, and the machine laughs.';
+  let flavorText = 'Better luck next time, scrub.';
+  let stamp = 'LOSS';
+  
+  if (result.tierId === 'guaranteed_wl' || result.tierId === 'triple_gem') {
+    artSrc = '/art-gtd.png';
+    typeLine = 'GUARANTEED · MINT SECURED';
+    symbolIcon = '/treasure.png'; 
+    rulesText = 'This goblin pulled the lever and walked away with a guaranteed spot. No raffle. No waiting. Just loot.';
+    flavorText = "The machine doesn't gamble on goblins like this.";
+    stamp = 'GTD';
+  } else if (result.tierId === 'fcfs_raffle') {
+    artSrc = '/art-fcfs.png';
+    typeLine = 'FIRST COME FIRST SERVED · CLAIM WINDOW OPEN';
+    symbolIcon = '/swordremovebg.png';
+    rulesText = "This goblin earned a claim spot. Speed matters — the machine doesn't hold loot for stragglers.";
+    flavorText = "Fast hands keep what slow hands drop.";
+    stamp = 'FCFS';
+  }
+
+  const dateStr = new Date(result.timestamp).toLocaleDateString();
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg flex flex-col items-center">
-        {/* Red Wax Seal Close Button */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto pt-10 pb-10">
+      <div className="relative w-full max-w-sm flex flex-col items-center">
         <button
           onClick={onClose}
-          className="wax-seal"
+          className="absolute -top-4 -right-4 z-10 w-10 h-10 bg-[#763D52] hover:bg-[#5D2B3D] text-[#ECE3C6] rounded-full border-2 border-[#3A332B] shadow-[2px_2px_0px_0px_#262320] flex items-center justify-center font-bold text-lg"
           aria-label="Close"
-          title="Close Scroll"
         >
           ✕
         </button>
 
-        {/* Top Wooden Rod */}
-        <div className="rod rod-top">
-          <span className="rod-cap left" />
-          <span className="rod-cap right" />
+        <div 
+          ref={cardRef} 
+          className="relative w-full aspect-[2.5/3.5] bg-[#111111] p-[3%] rounded-[1rem] shadow-2xl flex flex-col font-sans"
+        >
+          <div className="w-full h-full bg-[#AC2E21] border-2 border-[#111111] rounded-lg flex flex-col p-2 relative shadow-inner overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/30 pointer-events-none rounded-lg"></div>
+
+            <div className="relative z-10 bg-[#E8E2D6] border-2 border-[#111111] rounded-sm shadow-sm flex items-center justify-between px-3 py-1.5 mb-2">
+              <h2 className="font-mono font-bold text-lg text-black tracking-wide leading-none">{title}</h2>
+              <div className="w-5 h-5 bg-[#C4C4C4] border-2 border-[#111111] rounded-full flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0">
+                <img src={symbolIcon} alt="Symbol" className="w-3 h-3 object-contain" />
+              </div>
+            </div>
+
+            <div className="relative z-10 w-full flex-1 bg-[#111111] border-2 border-[#111111] rounded-sm overflow-hidden mb-2 shadow-inner">
+              <img src={artSrc} alt="Card Art" className="w-full h-full object-cover object-center" />
+            </div>
+
+            <div className="relative z-10 bg-[#E8E2D6] border-2 border-[#111111] rounded-sm shadow-sm flex items-center justify-between px-3 py-1 mb-2">
+              <span className="font-mono font-bold text-sm text-black tracking-wide leading-none">{typeLine}</span>
+              <img src="/skull.png" alt="Set" className="w-3 h-3 object-contain" />
+            </div>
+
+            <div className="relative z-10 bg-[#E8E2D6] border-2 border-[#111111] rounded-sm shadow-sm flex flex-col p-3 mb-1 min-h-[30%]">
+              <p className="font-mono text-base text-black leading-snug mb-3">
+                {rulesText}
+              </p>
+              
+              <div className="w-[80%] mx-auto h-[1px] bg-black/30 mb-2"></div>
+              
+              <p className="font-mono italic text-sm text-black/80 leading-snug">
+                {flavorText}
+              </p>
+            </div>
+
+            <div className="relative z-10 flex justify-between items-end px-1 pt-0.5 text-white/90 text-[10px] font-sans">
+              <div className="flex flex-col">
+                <span className="font-bold">{dateStr}</span>
+                <span className="opacity-80">GOBBOZ TM & © 2026</span>
+              </div>
+              <div className="font-heading text-lg drop-shadow-md">
+                {stamp}
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        {/* Parchment Body */}
-        <div className="relative w-full bg-[#E7D6A6] border-x-4 border-[#3A2A20] p-6 sm:p-8 shadow-2xl parchment-unroll max-h-[85vh] text-[#262320] flex flex-col items-center text-center">
-          {/* Background Crown & Sword Watermark */}
-          <div className="absolute right-4 bottom-4 w-44 h-44 opacity-15 pointer-events-none">
-            <img src="/crownandswordimage.png" alt="" className="w-full h-full object-contain" />
-          </div>
-
-          {/* Top Header Badge */}
-          <div className="flex items-center gap-2 mb-3 px-3.5 py-1 bg-[#763D52] text-[#ECE3C6] border-2 border-[#3A332B] rounded-full shadow-[2px_2px_0px_0px_#3A332B]">
-            <Sparkles className="w-4 h-4 text-[#F4C567]" />
-            <span className="font-pixel text-xs text-[#ECE3C6] uppercase tracking-widest font-bold">
-              {tier.badge}
+        <div className="w-full flex flex-col gap-3 mt-6">
+          <button
+            onClick={handleShareToX}
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>
+              {isShareClaimed
+                ? 'SHARED (+1 BONUS PULL ADDED!)'
+                : 'SHARE TO X (+1 BONUS PULL)'}
             </span>
-          </div>
+          </button>
 
-          {/* Goblin Art Header */}
-          <div className="my-2">
-            <GoblinAvatar
-              variant={
-                result.tierId === 'triple_gem'
-                  ? 'shaman'
-                  : result.tierId === 'guaranteed_wl'
-                  ? 'berserker'
-                  : result.tierId === 'fcfs_raffle'
-                  ? 'raider'
-                  : 'default'
-              }
-              size={90}
-              className="rounded-xl mx-auto border-2 border-[#3A332B] shadow-[4px_4px_0px_0px_#3A332B]"
-            />
-          </div>
-
-          {/* Title */}
-          <h3 className="font-heading text-2xl text-[#262320] tracking-wider mb-1 font-bold">
-            {tier.title}
-          </h3>
-          <p className="text-xs sm:text-sm text-[#3A332B] font-sans mb-4 px-4 font-medium">
-            {tier.description}
-          </p>
-
-          {/* Reeled Combo Display */}
-          <div className="w-full bg-[#F7F2E4] border-2 border-[#3A332B] rounded-xl p-4 mb-4 shadow-[4px_4px_0px_0px_#3A332B]">
-            <p className="font-pixel text-[10px] text-[#5D7C3B] uppercase tracking-wider mb-3 font-bold">
-              YOUR LEVER COMBO:
-            </p>
-            <div className="flex items-center justify-center gap-4 sm:gap-6">
-              {result.symbols.map((sym, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center bg-[#EBE3CA] border-2 border-[#3A332B] rounded-lg p-2 w-20 shadow-sm"
-                >
-                  <SymbolIcon symbolId={sym} size={48} showLabel />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bonus Reward Notification */}
-          {result.bonusSpinAwarded && (
-            <div className="w-full bg-[#5D7C3B]/20 border-2 border-[#5D7C3B] rounded-lg py-2 px-4 mb-4 flex items-center justify-center gap-2 text-[#262320] text-xs font-pixel font-bold">
-              <Sparkles className="w-4 h-4 text-[#5D7C3B] animate-spin" />
-              <span>+1 FREE LEVER SPIN AWARDED TO YOUR BALANCE!</span>
-            </div>
-          )}
-
-          {/* Share & Download Action Buttons */}
-          <div className="w-full flex flex-col sm:flex-row gap-3 mt-2">
-            <button
-              onClick={handleShareToX}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-[#5D7C3B] hover:bg-[#4E6B30] text-[#ECE3C6] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
-            >
-              <Share2 className="w-4 h-4" />
-              <span>
-                {isShareClaimed
-                  ? 'SHARED (+1 BONUS PULL ADDED!)'
-                  : 'SHARE TO X (+1 BONUS PULL)'}
-              </span>
-            </button>
-
-            <button
-              onClick={handleDownloadPng}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
-            >
-              <Download className="w-4 h-4 text-[#262320]" />
-              <span>DOWNLOAD CARD (PNG)</span>
-            </button>
-          </div>
-
+          <button
+            onClick={handleDownloadPng}
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-[#C49B33] hover:bg-[#B38D2C] text-[#262320] border-2 border-[#3A332B] font-pixel text-xs tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#262320] active:translate-y-0.5 transition-all"
+          >
+            <Download className="w-4 h-4 text-[#262320]" />
+            <span>DOWNLOAD COLLECTIBLE CARD</span>
+          </button>
+          
           {isShareClaimed && (
-            <p className="mt-3 text-xs text-[#5D7C3B] font-pixel flex items-center justify-center gap-1 font-bold">
+            <p className="text-xs text-[#5D7C3B] font-pixel flex items-center justify-center gap-1 font-bold">
               <CheckCircle2 className="w-4 h-4" />
               <span>Bonus pull unlocked! Check your balance.</span>
             </p>
           )}
-
-          {/* Hidden Canvas for PNG rendering */}
-          <canvas ref={canvasRef} className="hidden" />
-
-          {/* Footer info */}
-          <div className="mt-4 pt-3 border-t-2 border-[#3A332B]/30 w-full flex justify-between items-center text-[11px] text-[#3A332B] font-mono font-bold">
-            <span>Looter: {result.walletAddress.substring(0, 6)}...{result.walletAddress.substring(result.walletAddress.length - 4)}</span>
-            <span>GOBBOZ #001</span>
-          </div>
-        </div>
-
-        {/* Bottom Wooden Rod */}
-        <div className="rod rod-bottom">
-          <span className="rod-cap left" />
-          <span className="rod-cap right" />
         </div>
       </div>
     </div>

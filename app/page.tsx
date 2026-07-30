@@ -339,6 +339,7 @@ export default function GobbozHomePage() {
         result={activeCardModalResult}
         onClose={() => setActiveCardModalResult(null)}
         onShareBonusClaimed={handleShareBonusClaimed}
+        twitterHandle={userState.twitter}
       />
     </div>
   );

@@ -162,9 +162,19 @@ export const INITIAL_TASKS: TaskItem[] = [
     type: 'social'
   },
   {
-    id: 'like_rt',
-    title: 'Like & Repost Collab Tweet',
-    subtitle: 'Spread the meme. We gib. We grib.',
+    id: 'like_tweet',
+    title: 'Like Collab Tweet',
+    subtitle: 'Spread the meme. Like the tweet to show support.',
+    rewardText: '+1 PULL',
+    rewardPulls: 1,
+    isCompleted: false,
+    link: 'https://twitter.com/intent/like?tweet_id=2082134899067126023',
+    type: 'social'
+  },
+  {
+    id: 'retweet_tweet',
+    title: 'Repost Collab Tweet',
+    subtitle: 'We gib. We grib. Repost to spread the virus.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,

@@ -47,9 +47,18 @@ export const INITIAL_DB_TASKS = [
     type: 'social' as const
   },
   {
-    id: 'like_rt',
-    title: 'Like & Repost Collab Tweet',
-    subtitle: 'Spread the meme. We gib. We grib.',
+    id: 'like_tweet',
+    title: 'Like Collab Tweet',
+    subtitle: 'Spread the meme. Like the tweet to show support.',
+    rewardText: '+1 PULL',
+    rewardPulls: 1,
+    link: 'https://twitter.com/intent/like?tweet_id=2082134899067126023',
+    type: 'social' as const
+  },
+  {
+    id: 'retweet_tweet',
+    title: 'Repost Tweet',
+    subtitle: 'We gib. We grib. Repost to spread the virus.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
     link: 'https://twitter.com/intent/retweet?tweet_id=2082134899067126023',

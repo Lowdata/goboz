@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
+    "dotenv": "^17.4.2",
     "html-to-image": "^1.11.13",
     "lucide-react": "^1.27.0",
     "mongoose": "^9.8.1",

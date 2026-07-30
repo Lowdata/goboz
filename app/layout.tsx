@@ -14,6 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased scroll-smooth">
+      <head>
+        <link rel="preload" href="/art-gtd.png" as="image" />
+        <link rel="preload" href="/art-fcfs.png" as="image" />
+        <link rel="preload" href="/art-loss.png" as="image" />
+      </head>
       <body className="min-h-full flex flex-col bg-stone-950 text-parchment-100 selection:bg-amber-500 selection:text-stone-950">
         {children}
       </body>

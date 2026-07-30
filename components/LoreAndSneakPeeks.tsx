@@ -1,183 +1,45 @@
-import React from 'react';
-import { GoblinAvatar } from './GoblinAvatar';
-import { Sword, Skull, Crown, ShieldCheck, Clock, Award, Info } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { BookOpen, Crown, Skull, Sword, X } from 'lucide-react';
 
 export const LoreAndSneakPeeks: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <section className="w-full max-w-5xl mx-auto my-14 px-4">
-      {/* Lore & Sneak Peeks Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
-        {/* Left: GOBBOZ LORE */}
-        <div className="lg:col-span-6 bg-stone-900/90 border-4 border-stone-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-          <div>
-            <div className="mb-4">
-              <div className="banner banner--green">
-                <span className="skull">💀</span> GOBBOZ LORE
-              </div>
-            </div>
-
-            <div className="space-y-4 text-stone-300 font-sans text-sm sm:text-base leading-relaxed">
-              <p>
-                Long ago, goblins lived underground, stealing shinies and causing chaos.
-              </p>
-              <p>
-                One day, the humans built cages, locked the Gobboz away, and thought they had won.
-              </p>
-              <p className="font-semibold text-amber-400">
-                But Gobboz don&apos;t stay caged.
-              </p>
-              <p>
-                We escaped. We spread. We meme. Now we&apos;re taking over the internet—one gobbo, one gobbo at a time.
-              </p>
-            </div>
-
-            <div className="mt-6">
-              <div className="banner banner--plum">
-                <span className="skull">💀</span> WHY A LEVER, NOT A WHEEL
-              </div>
-              <p className="text-stone-300 font-sans text-sm sm:text-base leading-relaxed mt-2">
-                Goblins hoard loot — they don&apos;t spin roulette wheels in velvet rooms. A one-armed bandit stuffed with rusty daggers and stolen gems fits the tribe: torch-lit, primitive, perfectly Gobbo.
-              </p>
-            </div>
+    <section className="w-full max-w-5xl mx-auto my-8 px-4" aria-labelledby="lore-heading">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-amber-600/50 bg-stone-900 px-5 py-5 shadow-xl sm:px-7">
+        <img src="/skull.png" alt="" className="pointer-events-none absolute -left-8 -bottom-10 w-36 opacity-20" />
+        <img src="/crownandswordimage.png" alt="" className="pointer-events-none absolute -right-7 -top-8 w-32 rotate-12 opacity-25" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="font-mono text-xs tracking-[0.2em] text-amber-400">THE CAVERN CHRONICLES</p>
+            <h2 id="lore-heading" className="mt-1 text-xl">Gobboz Lore</h2>
+            <p className="mt-2 text-sm leading-relaxed text-stone-300">The cages broke. The tribe escaped. Now every lever pull is another shiny stolen back from the surface.</p>
           </div>
-
-          <div className="mt-8 pt-4 border-t border-stone-800 flex items-center justify-between">
-            <span className="font-pixel text-sm sm:text-base text-emerald-400 tracking-wider uppercase">
-              NO KINGS. NO MASTERS. ONLY DA TRIBE.
-            </span>
-            <Sword className="w-6 h-6 text-stone-500" />
-          </div>
-        </div>
-
-        {/* Right: SNEAK PEEKS */}
-        <div className="lg:col-span-6 bg-stone-900/90 border-4 border-stone-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
-          <div>
-            <div className="mb-4">
-              <div className="banner banner--ink">
-                <span className="skull">💀</span> SNEAK PEEKS
-              </div>
-            </div>
-
-            {/* 3 Pixel Goblins Showcase */}
-            <div className="grid grid-cols-3 gap-3 my-4">
-              <div className="flex flex-col items-center">
-                <GoblinAvatar variant="berserker" size={100} className="w-full h-auto aspect-square rounded-xl shadow-md" />
-                <span className="mt-2 font-pixel text-[10px] text-stone-400">#0042</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <GoblinAvatar variant="raider" size={100} className="w-full h-auto aspect-square rounded-xl shadow-md" />
-                <span className="mt-2 font-pixel text-[10px] text-stone-400">#0188</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <GoblinAvatar variant="shaman" size={100} className="w-full h-auto aspect-square rounded-xl shadow-md" />
-                <span className="mt-2 font-pixel text-[10px] text-stone-400">#0777</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Reference quote caption box */}
-          <div className="mt-4 p-4 bg-stone-950 border-2 border-dashed border-stone-700 rounded-xl">
-            <p className="font-pixel text-xs text-parchment-200 leading-relaxed">
-              * Pixelated. Primitive. Perfectly Gobbo. Our gobbos live on the edge of the canvas. Built for the culture. Born for the meme.
-            </p>
-          </div>
+          <button type="button" onClick={() => setIsOpen(true)} className="btn btn-ghost shrink-0 px-5 py-3 text-xs">
+            <BookOpen className="h-4 w-4" /> READ THE PARCHMENT
+          </button>
         </div>
       </div>
 
-      {/* Collection Details, Raffle Prize & Requirements 3-Column Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {/* COLLECTION DETAILS */}
-        <div className="bg-stone-900/90 border-2 border-stone-800 rounded-2xl p-5 shadow-xl">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-stone-800">
-            <Skull className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-pixel text-sm text-parchment-100 uppercase tracking-wider">
-              COLLECTION DETAILS
-            </h3>
-          </div>
-          <ul className="space-y-2 text-sm text-stone-300 font-sans">
-            <li className="flex justify-between">
-              <span className="text-stone-400">Style:</span>
-              <span className="font-semibold text-parchment-200">Pixel Art</span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-stone-400">Supply:</span>
-              <span className="font-semibold text-parchment-200">TBA</span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-stone-400">Chain:</span>
-              <span className="font-semibold text-parchment-200">Solana / ETH</span>
-            </li>
-            <li className="flex justify-between">
-              <span className="text-stone-400">Mint Price:</span>
-              <span className="font-semibold text-parchment-200">TBA (Free / Low)</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* RAFFLE PRIZE */}
-        <div className="bg-stone-900/90 border-2 border-stone-800 rounded-2xl p-5 shadow-xl">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-stone-800">
-            <Award className="w-5 h-5 text-amber-400" />
-            <h3 className="font-pixel text-sm text-parchment-100 uppercase tracking-wider">
-              RAFFLE PRIZE
-            </h3>
-          </div>
-          <div className="flex items-center gap-4 py-2">
-            <div className="w-12 h-12 bg-amber-500/20 border border-amber-500 rounded-xl flex items-center justify-center text-2xl">
-              🎁
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="parchment-title">
+          <div className="relative max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-sm border-8 border-wood bg-parchment p-6 text-ink shadow-2xl sm:p-10 parchment-sheet">
+            <button type="button" onClick={() => setIsOpen(false)} className="absolute right-4 top-4 rounded p-2 text-ink-soft hover:bg-black/10" aria-label="Close parchment"><X className="h-5 w-5" /></button>
+            <div className="mb-7 flex items-center gap-3 border-b-2 border-ink-soft/30 pb-4">
+              <Skull className="h-8 w-8 text-gob-green-dark" /><div><p className="font-mono text-[10px] tracking-widest text-ink-soft">GOBBOZ ARCHIVES</p><h2 id="parchment-title" className="text-2xl text-ink">The Full Parchment</h2></div>
             </div>
-            <div>
-              <p className="font-pixel text-xs text-amber-400">
-                ALLOWLIST SPOTS
-              </p>
-              <p className="text-xs text-stone-400 mt-1">
-                Guaranteed WL, FCFS Raffles & Mystery Goblin Chests
-              </p>
+            <div className="space-y-5 text-sm leading-7 text-ink-soft sm:text-base">
+              <p>Long ago, goblins lived below the stone, stealing shinies and causing exactly the right amount of chaos. Then the humans built cages and believed the tribe was finished.</p>
+              <p><strong className="text-ink">But Gobboz do not stay caged.</strong> We escaped, we spread, and we meme — one gobbo at a time.</p>
+              <div className="rounded border-2 border-ink-soft/30 bg-white/20 p-4"><div className="mb-2 flex items-center gap-2 font-heading text-ink"><Sword className="h-5 w-5" /> WHY A LEVER?</div>Goblins hoard loot. A creaking one-armed bandit full of rusty daggers and stolen gems belongs in this torch-lit cavern.</div>
+              <div className="rounded border-2 border-ink-soft/30 bg-white/20 p-4"><div className="mb-2 flex items-center gap-2 font-heading text-ink"><Crown className="h-5 w-5" /> THE PRIZE</div>Pull for allowlist spots, FCFS raffles, and mystery goblin chests. Winners are selected through AlphaBot after the campaign closes.</div>
             </div>
+            <p className="mt-8 border-t-2 border-ink-soft/30 pt-4 text-center font-heading text-sm text-gob-green-dark">NO KINGS. NO MASTERS. ONLY DA TRIBE.</p>
           </div>
         </div>
-
-        {/* RAFFLE REQUIREMENTS */}
-        <div className="bg-stone-900/90 border-2 border-stone-800 rounded-2xl p-5 shadow-xl">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-stone-800">
-            <ShieldCheck className="w-5 h-5 text-sky-400" />
-            <h3 className="font-pixel text-sm text-parchment-100 uppercase tracking-wider">
-              REQUIREMENTS
-            </h3>
-          </div>
-          <ol className="space-y-1.5 text-xs text-stone-300 font-sans list-decimal list-inside">
-            <li>Follow @GobbozHQ on X</li>
-            <li>Like &amp; Repost the collab tweet</li>
-            <li>Join Gobboz Discord</li>
-            <li>Join Partner Discord (optional)</li>
-            <li>Complete AlphaBot Verification</li>
-          </ol>
-        </div>
-      </div>
-
-      {/* Raffle Details & Important Note Footer Box */}
-      <div className="bg-stone-950 border-2 border-stone-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-inner">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-amber-500/10 border border-amber-500/40 rounded-xl">
-            <Clock className="w-6 h-6 text-amber-400" />
-          </div>
-          <div>
-            <h4 className="font-pixel text-sm text-parchment-100">
-              RAFFLE DETAILS
-            </h4>
-            <p className="text-xs text-stone-400 font-sans mt-0.5">
-              Winners selected via AlphaBot. Winners sheet includes Discord Username, Discord ID, and Wallet Address.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 px-4 py-2 bg-stone-900 border border-stone-700 rounded-xl max-w-sm">
-          <Info className="w-5 h-5 text-stone-400 shrink-0" />
-          <p className="text-[11px] text-stone-300 font-sans">
-            Gobboz reserves the right to cancel incomplete entries. <strong>ZOG!</strong>
-          </p>
-        </div>
-      </div>
+      )}
     </section>
   );
 };

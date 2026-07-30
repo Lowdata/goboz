@@ -38,7 +38,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         setTwitterHandle(currentUser.twitter);
       }
     }
-  }, [isOpen, initialStep, currentUser]);
+  }, [isOpen, initialStep]);
 
   if (!isOpen) return null;
 
@@ -55,19 +55,28 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         if (accounts && accounts.length > 0) {
           address = accounts[0];
         }
-      } else {
-        // Fallback for demo/testing if MetaMask extension is not installed
-        address = '0xGobboz_' + Math.random().toString(36).substring(2, 10).toLowerCase();
       }
 
       if (!address) {
         throw new Error('Could not retrieve MetaMask wallet address.');
       }
 
-      const res = await fetch('/api/user', {
+      if (!address) throw new Error('MetaMask is required to connect a wallet.');
+      const challengeRes = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: address })
+      });
+      const challenge = await challengeRes.json();
+      if (!challengeRes.ok) throw new Error(challenge.error || 'Failed to start wallet verification.');
+      const signature = await (window as any).ethereum.request({
+        method: 'personal_sign',
+        params: [challenge.message, address]
+      });
+      const res = await fetch('/api/auth', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress: address, signature })
       });
 
       const data = await res.json();
@@ -100,7 +109,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          walletAddress,
           twitter: skip ? '' : twitterHandle.trim()
         })
       });
@@ -133,7 +141,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          walletAddress,
           inviteCode: inviteCode.trim()
         })
       });
@@ -160,13 +167,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       <div className="relative w-full max-w-lg bg-stone-950 border-4 border-stone-800 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-parchment-100">
         {/* Background Dungeon Watermark */}
         <div className="absolute -right-12 -bottom-12 w-48 h-48 opacity-10 pointer-events-none">
-          <img src="/SKULL.png" alt="" className="w-full h-full object-contain" />
+          <img src="/skull.png" alt="" className="w-full h-full object-contain" />
         </div>
 
         {/* Header Badge */}
         <div className="flex items-center justify-between pb-4 mb-6 border-b border-stone-800">
           <div className="flex items-center gap-3">
-            <img src="/SKULL.png" alt="Gobboz Skull" className="w-8 h-8 object-contain" />
+            <img src="/skull.png" alt="Gobboz Skull" className="w-8 h-8 object-contain" />
             <div>
               <span className="font-heading text-lg sm:text-xl text-parchment-100 tracking-wider">
                 GOBLIN ONBOARDING
@@ -254,11 +261,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             <div>
               <label className="block font-mono text-xs text-stone-400 mb-2">
-                YOUR TWITTER HANDLE
+                YOUR X / TWITTER PROFILE
               </label>
               <input
                 type="text"
-                placeholder="@GobbozHQ"
+                placeholder="@GobbozHQ, GobbozHQ, or https://x.com/GobbozHQ"
                 value={twitterHandle}
                 onChange={(e) => setTwitterHandle(e.target.value)}
                 className="w-full px-4 py-3 bg-stone-900 border-2 border-stone-800 rounded-xl text-parchment-100 font-mono text-sm focus:outline-none focus:border-amber-500 transition-colors"

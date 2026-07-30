@@ -44,11 +44,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       const res = await fetch('/api/pull', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress: userState.walletAddress,
-          pullCount: userState.pullsRemaining,
-          pityCounter: userState.pityCounter
-        })
+        body: JSON.stringify({})
       });
 
       if (!res.ok) {
@@ -115,7 +111,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
       <div className="relative w-full max-w-3xl bg-gradient-to-b from-stone-800 via-stone-900 to-stone-950 border-4 sm:border-8 border-stone-700 rounded-3xl p-4 sm:p-8 shadow-2xl shadow-black/80 overflow-hidden">
         {/* Background Dungeon Skull Watermark */}
         <div className="absolute right-4 top-4 w-32 h-32 opacity-5 pointer-events-none">
-          <img src="/SKULL.png" alt="" className="w-full h-full object-contain" />
+          <img src="/skull.png" alt="" className="w-full h-full object-contain" />
         </div>
 
         {/* Decorative corner rivets */}
@@ -127,7 +123,7 @@ export const SlotMachine: React.FC<SlotMachineProps> = ({
         {/* Header Marquee Banner */}
         <div className="w-full bg-stone-950 border-2 border-stone-800 rounded-xl py-3 px-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-inner">
           <div className="flex items-center gap-2">
-            <img src="/SKULL.png" alt="Gobboz" className="w-6 h-6 object-contain" />
+            <img src="/skull.png" alt="Gobboz" className="w-6 h-6 object-contain" />
             <span className="font-heading text-xs sm:text-sm text-amber-400 tracking-wider">
               GOBBOZ ONE-ARMED BANDIT
             </span>

@@ -13,8 +13,8 @@ export async function GET() {
 
     const tasks = await Task.find({}).sort({ createdAt: 1 });
     return NextResponse.json(tasks);
-  } catch (error: any) {
-    console.error('Error fetching tasks from DB:', error);
+  } catch {
+    console.error('Error fetching tasks from DB.');
     return NextResponse.json(
       { error: 'Internal server error fetching tasks.' },
       { status: 500 }

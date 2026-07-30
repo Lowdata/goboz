@@ -24,13 +24,13 @@ export const RewardTiersModal: React.FC<RewardTiersModalProps> = ({
       <div className="relative w-full max-w-3xl bg-[#E9D9AC] border-4 border-[#5C3D22] rounded-3xl p-6 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] text-stone-900 selection:bg-amber-500 selection:text-stone-950">
         {/* Background Skull Watermark */}
         <div className="absolute right-4 bottom-4 w-40 h-40 opacity-10 pointer-events-none">
-          <img src="/SKULL.png" alt="" className="w-full h-full object-contain" />
+          <img src="/skull.png" alt="" className="w-full h-full object-contain" />
         </div>
 
         {/* Header Banner */}
         <div className="flex items-center justify-between pb-6 mb-8 border-b-2 border-[#5C3D22]/30">
           <div className="flex items-center gap-3">
-            <img src="/SKULL.png" alt="Gobboz Skull" className="w-10 h-10 object-contain drop-shadow" />
+            <img src="/skull.png" alt="Gobboz Skull" className="w-10 h-10 object-contain drop-shadow" />
             <div>
               <h2 className="font-heading text-xl sm:text-3xl text-stone-950 tracking-wider">
                 CAVERN REWARD TIERS

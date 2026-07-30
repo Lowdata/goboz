@@ -1,101 +1,42 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { User } from '@/models/User';
 import { Task } from '@/models/Task';
+import { assertSameOrigin, getAuthenticatedWallet, publicUser } from '@/lib/security';
 
-export async function POST(request: Request) {
+function startOfToday() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+}
+
+export async function POST(request: NextRequest) {
+  if (!assertSameOrigin(request)) return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  const walletAddress = getAuthenticatedWallet(request);
+  if (!walletAddress) return NextResponse.json({ error: 'Wallet authentication required.' }, { status: 401 });
   try {
-    const body = await request.json();
-    const { walletAddress, taskId } = body;
-
-    if (!walletAddress || !taskId) {
-      return NextResponse.json(
-        { error: 'walletAddress and taskId are required.' },
-        { status: 400 }
-      );
+    const { taskId } = await request.json();
+    if (typeof taskId !== 'string' || !/^[a-z_]{2,40}$/.test(taskId)) {
+      return NextResponse.json({ error: 'Invalid task.' }, { status: 400 });
     }
-
+    if (taskId === 'refer_friend') return NextResponse.json({ error: 'Referral rewards are granted when a friend applies your code.' }, { status: 400 });
     await connectDB();
+    const task = await Task.findOne({ id: taskId }).lean();
+    if (!task || taskId === 'connect_wallet') return NextResponse.json({ error: 'Task not available.' }, { status: 404 });
 
-    const normalizedAddress = walletAddress.toLowerCase().trim();
-    const user = await User.findOne({ walletAddress: normalizedAddress });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found.' },
-        { status: 404 }
-      );
-    }
-
-    let task = await Task.findOne({ id: taskId });
-    if (!task) {
-      const defaultTasks: Record<string, number> = {
-        connect_wallet: 3,
-        follow_x: 1,
-        like_rt: 1,
-        refer_friend: 2,
-        daily_claim: 1,
-        share_result: 1
-      };
-      if (taskId in defaultTasks) {
-        task = await Task.create({
-          id: taskId,
-          title: taskId,
-          subtitle: 'Completed task',
-          rewardText: `+${defaultTasks[taskId]} PULLS`,
-          rewardPulls: defaultTasks[taskId],
-          type: 'social'
-        });
-      } else {
-        return NextResponse.json(
-          { error: 'Task not found in DB.' },
-          { status: 404 }
-        );
-      }
-    }
-
-    // Enforce once a day for daily_claim
+    const filter: Record<string, unknown> = { walletAddress };
+    const update: Record<string, unknown> = { $inc: { pullsLeft: task.rewardPulls }, $addToSet: { completedTasks: taskId } };
     if (taskId === 'daily_claim') {
-      const todayStr = new Date().toDateString();
-      if (
-        user.lastDailyClaim &&
-        new Date(user.lastDailyClaim).toDateString() === todayStr
-      ) {
-        return NextResponse.json(
-          { error: 'Daily claim already used today! Come back tomorrow.' },
-          { status: 400 }
-        );
-      }
-      user.lastDailyClaim = new Date();
-    } else if (
-      taskId !== 'refer_friend' &&
-      user.completedTasks.includes(taskId)
-    ) {
-      return NextResponse.json(
-        { error: 'Task already completed!' },
-        { status: 400 }
-      );
+      filter.$or = [{ lastDailyClaim: null }, { lastDailyClaim: { $lt: startOfToday() } }];
+      update.$set = { lastDailyClaim: new Date() };
+    } else {
+      filter.completedTasks = { $ne: taskId };
     }
-
-    // Award pulls
-    user.pullsLeft += task.rewardPulls;
-
-    if (!user.completedTasks.includes(taskId)) {
-      user.completedTasks.push(taskId);
+    const user = await User.findOneAndUpdate(filter, update, { new: true });
+    if (!user) {
+      return NextResponse.json({ error: taskId === 'daily_claim' ? 'Daily claim already used today.' : 'Task already completed.' }, { status: 409 });
     }
-
-    await user.save();
-
-    return NextResponse.json({
-      success: true,
-      user,
-      rewardPulls: task.rewardPulls
-    });
-  } catch (error: any) {
-    console.error('Error completing task:', error);
-    return NextResponse.json(
-      { error: 'Internal server error completing task.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: true, user: publicUser(user), rewardPulls: task.rewardPulls });
+  } catch {
+    return NextResponse.json({ error: 'Unable to complete task.' }, { status: 500 });
   }
 }

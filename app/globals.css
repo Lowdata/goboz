@@ -217,6 +217,11 @@
   line-height: 1.6;
 }
 
+.parchment-sheet {
+  background-image: linear-gradient(rgba(255,255,255,.16), rgba(92,61,34,.10)), radial-gradient(circle at 20% 10%, rgba(255,255,255,.45), transparent 35%);
+  box-shadow: inset 0 0 70px rgba(74,56,38,.24), 0 30px 90px rgba(0,0,0,.7);
+}
+
 /* ---------- buttons ---------- */
 .btn {
   font-family: var(--font-mono);
@@ -343,4 +348,3 @@
   background-color: #D9A544;
   color: #0E0A06;
 }
-

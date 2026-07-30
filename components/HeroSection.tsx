@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserState } from '@/types/game';
-import { Play, Sparkles, Trophy } from 'lucide-react';
+import { Play, Trophy } from 'lucide-react';
 
 interface HeroSectionProps {
   userState: UserState;
@@ -34,18 +34,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         THE <span className="g">LEVER MACHINE</span> — <span className="p">LOOT</span> AWAITS
       </div>
 
-      {/* Decorative Tribal Crest Artwork */}
-      <div className="flex items-center justify-center gap-4 my-6">
+      <div className="relative mx-auto my-6 flex max-w-xl items-center justify-center">
         <img
           src="/skull.png"
           alt="Gobboz Skull"
-          className="w-16 sm:w-24 h-auto object-contain drop-shadow-[0_0_20px_rgba(127,168,62,0.5)] hover:scale-110 transition-transform"
+          className="absolute left-0 w-16 sm:-left-8 sm:w-24 h-auto object-contain drop-shadow-[0_0_20px_rgba(127,168,62,0.5)] hover:scale-110 transition-transform"
         />
         <img
           src="/crownandswordimage.png"
           alt="Gobboz Crown & Sword"
-          className="w-20 sm:w-28 h-auto object-contain drop-shadow-[0_0_20px_rgba(217,165,68,0.5)] hover:scale-110 transition-transform"
+          className="absolute right-0 w-20 sm:-right-10 sm:w-28 h-auto object-contain drop-shadow-[0_0_20px_rgba(217,165,68,0.5)] hover:scale-110 transition-transform"
         />
+        <div className="h-16 w-full border-y border-amber-600/30 bg-stone-900/60" />
       </div>
 
       {/* Main Headline */}

@@ -70,7 +70,7 @@ export default function GobbozHomePage() {
     }
   }, [userState.completedTasks]);
 
-  const handleOnboardingSuccess = (user: any) => {
+  const handleOnboardingSuccess = (user: { walletAddress: string; twitter?: string; referralCode?: string; referredUsers?: string[]; pullsLeft?: number; pityCounter?: number; completedTasks?: string[] }) => {
     const tasksMap: Record<string, boolean> = {};
     if (user.completedTasks && Array.isArray(user.completedTasks)) {
       user.completedTasks.forEach((tid: string) => {
@@ -91,6 +91,12 @@ export default function GobbozHomePage() {
     }));
   };
 
+  useEffect(() => {
+    fetch('/api/user').then(async (res) => {
+      if (res.ok) handleOnboardingSuccess(await res.json());
+    }).catch(() => undefined);
+  }, []);
+
   const handleDisconnect = () => {
     setUserState((prev) => ({
       ...prev,
@@ -109,7 +115,7 @@ export default function GobbozHomePage() {
     }));
   };
 
-  const handlePullCompleted = (result: PullResult & { user?: any }) => {
+  const handlePullCompleted = (result: PullResult & { user?: { pullsLeft?: number; pityCounter?: number } }) => {
     setUserState((prev) => {
       const newHistory = [result, ...prev.history];
       return {
@@ -146,7 +152,6 @@ export default function GobbozHomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          walletAddress: userState.walletAddress,
           taskId
         })
       });
@@ -177,14 +182,7 @@ export default function GobbozHomePage() {
 
   const handleShareBonusClaimed = () => {
     if (userState.completedTasks['share_result']) return;
-    setUserState((prev) => ({
-      ...prev,
-      pullsRemaining: prev.pullsRemaining + 1,
-      completedTasks: {
-        ...prev.completedTasks,
-        share_result: true
-      }
-    }));
+    void handleCompleteTask('share_result', 1);
   };
 
   const scrollToMachine = () => {
@@ -222,6 +220,8 @@ export default function GobbozHomePage() {
           onOpenRewardTiersModal={() => setIsRewardTiersModalOpen(true)}
         />
 
+        <LoreAndSneakPeeks />
+
         {/* Anchor for scrolling to slot machine */}
         <div id="slot-machine-anchor" className="scroll-mt-24" />
 
@@ -254,9 +254,6 @@ export default function GobbozHomePage() {
           tasksDB={dbTasks}
         />
 
-        {/* Gobboz Lore, Sneak Peeks & Raffle Details */}
-        <LoreAndSneakPeeks />
-
         {/* Past Pulls History */}
         <PullHistory
           history={userState.history}
@@ -280,6 +277,7 @@ export default function GobbozHomePage() {
         initialStep={onboardingStep}
         onClose={() => setIsOnboardingModalOpen(false)}
         onSuccess={handleOnboardingSuccess}
+        currentUser={userState.isConnected ? userState : null}
       />
 
       {/* Parchment Reward Tiers Modal */}

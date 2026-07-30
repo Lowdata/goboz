@@ -15,6 +15,7 @@ export interface IUser extends Document {
   rewards: IRewardItem[];
   referralCode: string;
   referredUsers: string[];
+  referredBy?: string;
   completedTasks: string[];
   pityCounter: number;
   lastDailyClaim?: Date;
@@ -63,6 +64,12 @@ const UserSchema = new Schema<IUser>(
     referredUsers: {
       type: [String],
       default: []
+    },
+    referredBy: {
+      type: String,
+      default: null,
+      lowercase: true,
+      trim: true
     },
     completedTasks: {
       type: [String],

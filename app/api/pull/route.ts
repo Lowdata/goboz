@@ -1,8 +1,10 @@
-import { NextResponse } from 'next/server';
+import { randomInt, randomUUID } from 'node:crypto';
+import { NextRequest, NextResponse } from 'next/server';
 import { SymbolId, OutcomeTierId, PullResult } from '@/types/game';
 import { PITY_THRESHOLD } from '@/utils/constants';
 import { connectDB } from '@/lib/db';
 import { User } from '@/models/User';
+import { assertSameOrigin, getAuthenticatedWallet, publicUser } from '@/lib/security';
 
 const ALL_SYMBOLS: SymbolId[] = [
   'gold_coin',
@@ -26,24 +28,15 @@ const NON_GEM_SYMBOLS: SymbolId[] = [
 ];
 
 function getRandomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+  return arr[randomInt(arr.length)];
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  if (!assertSameOrigin(request)) return NextResponse.json({ error: 'Invalid request origin.' }, { status: 403 });
+  const normalizedAddress = getAuthenticatedWallet(request);
+  if (!normalizedAddress) return NextResponse.json({ error: 'Wallet authentication required.' }, { status: 401 });
   try {
-    const body = await request.json();
-    const { walletAddress } = body;
-
-    if (!walletAddress) {
-      return NextResponse.json(
-        { error: 'Wallet address required to pull the lever.' },
-        { status: 400 }
-      );
-    }
-
     await connectDB();
-
-    const normalizedAddress = walletAddress.toLowerCase().trim();
     const user = await User.findOne({ walletAddress: normalizedAddress });
 
     if (!user) {
@@ -77,7 +70,7 @@ export async function POST(request: Request) {
     let tierId: OutcomeTierId = 'no_match';
     let symbols: [SymbolId, SymbolId, SymbolId] = ['skull', 'mushroom', 'gold_coin'];
 
-    const rand = Math.random() * 100;
+    const rand = randomInt(10_000) / 100;
 
     if (isGuaranteedHit) {
       // Pity hit triggered! Guarantee at least a 2x or 3x match
@@ -110,7 +103,7 @@ export async function POST(request: Request) {
         const pairSym = getRandomItem(ALL_SYMBOLS);
         const otherSymbols = ALL_SYMBOLS.filter((s) => s !== pairSym);
         const thirdSym = getRandomItem(otherSymbols);
-        const pos = Math.floor(Math.random() * 3);
+        const pos = randomInt(3);
         const result: [SymbolId, SymbolId, SymbolId] = [pairSym, pairSym, pairSym];
         result[pos] = thirdSym;
         tierId = 'fcfs_raffle';
@@ -153,7 +146,7 @@ export async function POST(request: Request) {
     };
 
     const timestamp = new Date().toISOString();
-    const pullId = `pull-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const pullId = `pull-${randomUUID()}`;
 
     const pullResult: PullResult = {
       id: pullId,
@@ -168,22 +161,21 @@ export async function POST(request: Request) {
       bonusSpinAwarded
     };
 
-    // Update user in MongoDB
-    user.pullsLeft = newPullsRemaining;
-    user.pityCounter = newPityCounter;
-    user.rewards.push({
-      pullId,
-      tierId,
-      tierName: tierNameMap[tierId],
-      symbols,
-      timestamp
-    });
-
-    await user.save();
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id, pullsLeft: user.pullsLeft, pityCounter },
+      {
+        $set: { pullsLeft: newPullsRemaining, pityCounter: newPityCounter },
+        $push: { rewards: { pullId, tierId, tierName: tierNameMap[tierId], symbols, timestamp } }
+      },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return NextResponse.json({ error: 'State changed. Please pull again.' }, { status: 409 });
+    }
 
     return NextResponse.json({
       ...pullResult,
-      user
+      user: publicUser(updatedUser)
     });
   } catch (error) {
     console.error('Error resolving pull:', error);

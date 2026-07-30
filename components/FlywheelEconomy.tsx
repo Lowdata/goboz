@@ -18,7 +18,9 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
   tasksDB
 }) => {
   const [copiedRef, setCopiedRef] = useState(false);
-  const tasks = tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS;
+  const [completingTask, setCompletingTask] = useState<string | null>(null);
+  const tasks = (tasksDB && tasksDB.length > 0 ? tasksDB : INITIAL_TASKS)
+    .filter((task) => !['connect_wallet', 'refer_friend', 'daily_claim', 'share_result'].includes(task.id));
 
   const handleTaskClick = (task?: TaskItem) => {
     if (!task) return;
@@ -27,14 +29,18 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
       return;
     }
 
-    if (userState.completedTasks[task.id]) return;
+    if (userState.completedTasks[task.id] || completingTask) return;
 
     if (task.link) {
-      window.open(task.link, '_blank');
+      window.open(task.link, '_blank', 'noopener,noreferrer');
     }
 
     sound.playCoin();
-    onCompleteTask(task.id, task.rewardPulls);
+    setCompletingTask(task.id);
+    window.setTimeout(() => {
+      onCompleteTask(task.id, task.rewardPulls);
+      setCompletingTask(null);
+    }, 5000);
   };
 
   const handleDailyClaim = () => {
@@ -57,11 +63,6 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
     navigator.clipboard.writeText(refLink);
     setCopiedRef(true);
     sound.playCoin();
-
-    // Also award referral test reward if not already claimed
-    if (!userState.completedTasks['refer_friend']) {
-      onCompleteTask('refer_friend', 2);
-    }
 
     setTimeout(() => setCopiedRef(false), 3000);
   };
@@ -175,6 +176,7 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
         <div className="space-y-3">
           {tasks.map((task) => {
             const isCompleted = !!userState.completedTasks[task.id];
+            const isCompleting = completingTask === task.id;
             return (
               <div
                 key={task.id}
@@ -226,14 +228,14 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
                   </span>
 
                   <button
-                    disabled={isCompleted}
+                    disabled={isCompleted || isCompleting}
                     className={`px-3 py-1.5 rounded font-pixel text-xs tracking-wider transition-colors ${
                       isCompleted
                         ? 'bg-stone-800 text-stone-500 cursor-default'
                         : 'bg-amber-500 hover:bg-amber-400 text-stone-950 shadow-sm'
                     }`}
                   >
-                    {isCompleted ? 'COMPLETED' : 'CLAIM PULL'}
+                    {isCompleted ? 'COMPLETED' : isCompleting ? 'MARKING IN 5S...' : 'CLAIM PULL'}
                   </button>
                 </div>
               </div>

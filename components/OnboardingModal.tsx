@@ -44,6 +44,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         if (currentUser?.twitter) {
           setTwitterHandle(currentUser.twitter);
         }
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const refCode = params.get('ref');
+          if (refCode && !inviteCode) setInviteCode(refCode);
+        }
       });
       return () => cancelAnimationFrame(raf);
     }
@@ -207,7 +212,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         throw new Error(data.error || 'Failed to apply invite code.');
       }
 
-      setSuccessMsg('+2 BONUS PULLS AWARDED! Welcome to DA TRIBE!');
+      setSuccessMsg('+1 BONUS PULL AWARDED! Welcome to DA TRIBE!');
       onSuccess({ ...data, isConnected: true });
       setTimeout(() => {
         onClose();

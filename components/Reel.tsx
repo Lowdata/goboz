@@ -79,10 +79,10 @@ export const Reel: React.FC<ReelProps> = ({
             isLocallySpinning ? 'blur-[1px] scale-90 opacity-80' : 'scale-100 opacity-100'
           }`}
         >
-          <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center">
-            <SymbolIcon symbolId={currentSymbol} size={64} showLabel={false} />
+          <div className="w-8 h-8 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+            <SymbolIcon symbolId={currentSymbol} size={48} showLabel={false} />
           </div>
-          <span className="font-pixel text-[9px] sm:text-[10px] uppercase text-[#3A332B] mt-1 font-bold tracking-wider">
+          <span className="font-pixel text-[9px] sm:text-[10px] uppercase text-[#3A332B] mt-2 font-bold tracking-wider">
             {SYMBOL_LIST.find((s) => s.id === currentSymbol)?.name}
           </span>
         </div>

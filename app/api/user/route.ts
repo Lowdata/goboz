@@ -65,12 +65,12 @@ export async function PUT(request: NextRequest) {
       if (cleanCode === user.referralCode.toUpperCase()) return NextResponse.json({ error: 'You cannot refer yourself.' }, { status: 400 });
       const referrer = await User.findOneAndUpdate(
         { referralCode: cleanCode, walletAddress: { $ne: walletAddress }, referredUsers: { $ne: walletAddress } },
-        { $addToSet: { referredUsers: walletAddress }, $inc: { pullsLeft: 2 } },
+        { $addToSet: { referredUsers: walletAddress }, $inc: { pullsLeft: 1 } },
         { new: true }
       );
       if (!referrer) return NextResponse.json({ error: 'Invalid or already-used referral code.' }, { status: 400 });
       user.referredBy = referrer.walletAddress;
-      user.pullsLeft += 2;
+      user.pullsLeft += 1;
     }
 
     await user.save();

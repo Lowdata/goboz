@@ -233,7 +233,7 @@ export default function GobbozHomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ECE3C6] text-[#262320] flex flex-col font-sans selection:bg-[#5D7C3B] selection:text-[#ECE3C6] overflow-x-hidden">
+    <div className="min-h-screen bg-[#ECE3C6] text-[#262320] flex flex-col font-sans selection:bg-[#5D7C3B] selection:text-[#ECE3C6]">
       {/* Top Navbar */}
       <Navbar
         userState={userState}
@@ -252,8 +252,8 @@ export default function GobbozHomePage() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 sm:py-8">
         {/* Compact Title / Header Banner */}
         <div className="text-center mb-8 sm:mb-10">
-          <h1 className="font-heading text-4xl sm:text-6xl text-[#262320] uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(58,51,43,0.15)]">
-            PULL THE LEVER. <span className="text-[#5D7C3B]">LOOT THE LIST.</span>
+          <h1 className="font-heading text-[1.75rem] min-[400px]:text-3xl sm:text-5xl md:text-6xl text-[#262320] uppercase tracking-wider drop-shadow-[0_2px_4px_rgba(58,51,43,0.15)] leading-tight">
+            PULL THE LEVER. <span className="text-[#5D7C3B] block sm:inline">LOOT THE LIST.</span>
           </h1>
           <p className="font-mono text-xs sm:text-sm text-[#3A332B] mt-1 max-w-2xl mx-auto tracking-wide font-medium">
             Every goblin&apos;s got a lever to pull and something to steal. Yours might be a whitelist spot.

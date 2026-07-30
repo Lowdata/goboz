@@ -60,10 +60,10 @@ export const FlywheelEconomy: React.FC<FlywheelEconomyProps> = ({
     <section className="w-full max-w-5xl mx-auto my-12 px-4">
       {/* Section Header */}
       <div className="text-center mb-8">
-        <h2 className="font-pixel text-2xl sm:text-3xl text-parchment-100 tracking-wider mb-2">
-          PULL ECONOMY (THE FLYWHEEL)
-        </h2>
-        <p className="font-pixel text-sm text-amber-400 uppercase tracking-widest">
+        <div className="banner banner--plum">
+          <span className="skull">💀</span> PULL ECONOMY
+        </div>
+        <p className="font-mono text-xs text-parchment-dim uppercase tracking-widest mt-1">
           More pulls, more loot.
         </p>
       </div>

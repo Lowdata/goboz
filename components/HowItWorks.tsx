@@ -26,10 +26,10 @@ export const HowItWorks: React.FC = () => {
   return (
     <section className="w-full max-w-5xl mx-auto my-12 px-4">
       <div className="text-center mb-8">
-        <h2 className="font-pixel text-2xl sm:text-3xl text-parchment-100 tracking-wider mb-1">
-          HOW IT WORKS
-        </h2>
-        <p className="font-pixel text-xs text-stone-400 uppercase tracking-widest">
+        <div className="banner banner--green">
+          <span className="skull">💀</span> HOW IT WORKS
+        </div>
+        <p className="font-mono text-xs text-parchment-dim uppercase tracking-widest mt-1">
           THREE STEPS TO TRIBAL GLORY
         </p>
       </div>

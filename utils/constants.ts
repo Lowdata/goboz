@@ -155,12 +155,12 @@ export const INITIAL_TASKS: TaskItem[] = [
   },
   {
     id: 'follow_x',
-    title: 'Follow @Gobboz',
+    title: 'Follow @GobbozHQ',
     subtitle: 'Join the tribe on X for alpha & shiny drops.',
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://twitter.com/Gobboz',
+    link: 'https://x.com/gobbozhq',
     type: 'social'
   },
   {
@@ -170,7 +170,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     rewardText: '+1 PULL',
     rewardPulls: 1,
     isCompleted: false,
-    link: 'https://twitter.com/Gobboz',
+    link: 'https://x.com/gobbozhq/status/2082134899067126023',
     type: 'social'
   },
   {

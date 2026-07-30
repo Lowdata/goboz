@@ -10,11 +10,10 @@ export const LoreAndSneakPeeks: React.FC = () => {
         {/* Left: GOBBOZ LORE */}
         <div className="lg:col-span-6 bg-stone-900/90 border-4 border-stone-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden">
           <div>
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-stone-800">
-              <Skull className="w-6 h-6 text-amber-500" />
-              <h2 className="font-pixel text-xl sm:text-2xl text-parchment-100 tracking-wider">
-                GOBBOZ LORE
-              </h2>
+            <div className="mb-4">
+              <div className="banner banner--green">
+                <span className="skull">💀</span> GOBBOZ LORE
+              </div>
             </div>
 
             <div className="space-y-4 text-stone-300 font-sans text-sm sm:text-base leading-relaxed">
@@ -31,6 +30,15 @@ export const LoreAndSneakPeeks: React.FC = () => {
                 We escaped. We spread. We meme. Now we&apos;re taking over the internet—one gobbo, one gobbo at a time.
               </p>
             </div>
+
+            <div className="mt-6">
+              <div className="banner banner--plum">
+                <span className="skull">💀</span> WHY A LEVER, NOT A WHEEL
+              </div>
+              <p className="text-stone-300 font-sans text-sm sm:text-base leading-relaxed mt-2">
+                Goblins hoard loot — they don&apos;t spin roulette wheels in velvet rooms. A one-armed bandit stuffed with rusty daggers and stolen gems fits the tribe: torch-lit, primitive, perfectly Gobbo.
+              </p>
+            </div>
           </div>
 
           <div className="mt-8 pt-4 border-t border-stone-800 flex items-center justify-between">
@@ -44,11 +52,10 @@ export const LoreAndSneakPeeks: React.FC = () => {
         {/* Right: SNEAK PEEKS */}
         <div className="lg:col-span-6 bg-stone-900/90 border-4 border-stone-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
           <div>
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-stone-800">
-              <Crown className="w-6 h-6 text-amber-500" />
-              <h2 className="font-pixel text-xl sm:text-2xl text-parchment-100 tracking-wider">
-                SNEAK PEEKS
-              </h2>
+            <div className="mb-4">
+              <div className="banner banner--ink">
+                <span className="skull">💀</span> SNEAK PEEKS
+              </div>
             </div>
 
             {/* 3 Pixel Goblins Showcase */}
@@ -139,8 +146,8 @@ export const LoreAndSneakPeeks: React.FC = () => {
             </h3>
           </div>
           <ol className="space-y-1.5 text-xs text-stone-300 font-sans list-decimal list-inside">
-            <li>Follow @Gobboz on X</li>
-            <li>Like & Repost the collab tweet</li>
+            <li>Follow @GobbozHQ on X</li>
+            <li>Like &amp; Repost the collab tweet</li>
             <li>Join Gobboz Discord</li>
             <li>Join Partner Discord (optional)</li>
             <li>Complete AlphaBot Verification</li>

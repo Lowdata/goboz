@@ -1,31 +1,326 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Eater&family=Cinzel:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700;800&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap');
 
 @import "tailwindcss";
 
+@theme {
+  --color-pitch: #0E0A06;
+  --color-cave: #171008;
+  --color-cave-mid: #241809;
+  --color-stone: #3A2A17;
+  --color-wood: #5C3D22;
+  --color-wood-dark: #34220F;
+  --color-parchment: #E9D9AC;
+  --color-parchment-dim: #DCC894;
+  --color-ink: #17110A;
+  --color-ink-soft: #4A3826;
+  --color-gob-green: #7FA83E;
+  --color-gob-green-dark: #45611F;
+  --color-gob-green-glow: #B7DB7C;
+  --color-gold: #D9A544;
+  --color-gold-bright: #F4C567;
+  --color-wine: #5C2A38;
+  --color-wine-dark: #3A1B24;
+  --color-rust: #B0522F;
+
+  --color-stone-950: #0E0A06;
+  --color-stone-900: #171008;
+  --color-stone-800: #241809;
+  --color-stone-700: #3A2A17;
+  --color-stone-600: #4A3826;
+  --color-stone-500: #64503A;
+  --color-stone-400: #887056;
+  --color-stone-300: #B39F85;
+  --color-stone-200: #DCC894;
+
+  --color-parchment-100: #E9D9AC;
+  --color-parchment-200: #DCC894;
+  --color-parchment-300: #CBB982;
+
+  --color-amber-300: #F6D288;
+  --color-amber-400: #F4C567;
+  --color-amber-500: #D9A544;
+  --color-amber-600: #c68f34;
+
+  --color-emerald-400: #B7DB7C;
+  --color-emerald-500: #7FA83E;
+  --color-emerald-600: #45611F;
+}
+
 @layer base {
   :root {
-    --background: #121214;
-    --foreground: #f4efe6;
+    --background: #0E0A06;
+    --foreground: #E9D9AC;
+    --pitch: #0E0A06;
+    --cave: #171008;
+    --cave-mid: #241809;
+    --stone: #3A2A17;
+    --wood: #5C3D22;
+    --wood-dark: #34220F;
+    --parchment: #E9D9AC;
+    --parchment-dim: #DCC894;
+    --parchment-line: rgba(58,42,23,0.35);
+    --ink: #17110A;
+    --ink-soft: #4A3826;
+    --gob-green: #7FA83E;
+    --gob-green-dark: #45611F;
+    --gob-green-glow: #B7DB7C;
+    --gold: #D9A544;
+    --gold-bright: #F4C567;
+    --wine: #5C2A38;
+    --wine-dark: #3A1B24;
+    --rust: #B0522F;
+    --line: rgba(233,217,172,0.14);
+
+    --font-logo: 'Eater', cursive;
+    --font-heading: 'Cinzel', serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'Work Sans', sans-serif;
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-image: 
-      radial-gradient(circle at 10% 20%, rgba(63, 130, 46, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 90% 80%, rgba(245, 184, 46, 0.06) 0%, transparent 40%),
-      radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+    background-color: var(--pitch);
+    color: var(--parchment);
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(217,165,68,0.14), transparent 65%),
+      radial-gradient(ellipse 700px 500px at 90% 20%, rgba(127,168,62,0.07), transparent 60%),
+      radial-gradient(circle at 1px 1px, rgba(233,217,172,0.05) 1px, transparent 0);
+    background-size: auto, auto, 24px 24px;
     background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--parchment);
   }
 }
 
+/* Fonts */
+.font-logo {
+  font-family: var(--font-logo), 'Eater', cursive;
+}
+.font-heading {
+  font-family: var(--font-heading), 'Cinzel', serif;
+}
+.font-mono {
+  font-family: var(--font-mono), 'Space Mono', monospace;
+}
+.font-body, .font-sans {
+  font-family: var(--font-body), 'Work Sans', sans-serif;
+}
 .font-pixel {
-  font-family: 'Press Start 2P', 'VT323', monospace, sans-serif;
+  font-family: var(--font-heading), 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.font-pixel-lg {
+  font-family: var(--font-logo), 'Eater', cursive;
+  letter-spacing: 0.05em;
 }
 
-.font-pixel-lg {
-  font-family: 'VT323', 'Press Start 2P', monospace, sans-serif;
+/* ---------- top bar / brand from temp/index.html ---------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-logo);
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: var(--gob-green);
+  text-shadow: 0 3px 0 var(--gob-green-dark), 0 5px 10px rgba(0,0,0,0.6);
+}
+.brand .skull {
+  font-size: 18px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));
+}
+.brand .z {
+  color: var(--gold-bright);
+  text-shadow: 0 3px 0 var(--rust), 0 5px 10px rgba(0,0,0,0.6);
+}
+.pulls-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-dark));
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 16px;
+  border: 1px solid rgba(217,165,68,0.35);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+}
+.pulls-chip b {
+  color: var(--gold-bright);
+}
+
+/* ---------- hero ---------- */
+.ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-dark));
+  color: var(--gold-bright);
+  padding: 9px 18px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 26px;
+  border: 1px solid rgba(217,165,68,0.3);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+}
+.logo-mark {
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: clamp(52px, 10vw, 108px);
+  line-height: 1;
+  letter-spacing: 2px;
+  color: var(--gob-green);
+  text-shadow:
+    0 4px 0 var(--gob-green-dark),
+    0 7px 0 var(--ink),
+    0 10px 22px rgba(0,0,0,0.65),
+    0 0 46px rgba(127,168,62,0.4);
+  margin-bottom: 10px;
+}
+.logo-mark .z2 {
+  color: var(--gold-bright);
+  text-shadow: 0 4px 0 var(--rust), 0 7px 0 var(--ink), 0 10px 22px rgba(0,0,0,0.65), 0 0 46px rgba(217,165,68,0.4);
+}
+.tagline {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-size: 13px;
+  color: var(--parchment-dim);
+  margin-bottom: 38px;
+}
+.tagline .g { color: var(--gob-green-glow); }
+.tagline .p { color: var(--gold-bright); }
+
+.headline {
+  font-size: clamp(26px, 4.4vw, 46px);
+  line-height: 1.35;
+  max-width: 820px;
+  margin: 0 auto 20px;
+  color: var(--parchment);
+}
+.headline .hl { color: var(--gold-bright); }
+.subhead {
+  font-size: 17px;
+  color: var(--parchment-dim);
+  max-width: 520px;
+  margin: 0 auto 34px;
+  line-height: 1.6;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 16px 30px;
+  border: 3px solid var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform .12s ease;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: var(--ink);
+  box-shadow: 5px 5px 0 var(--wood-dark), 0 10px 20px rgba(0,0,0,0.4);
+}
+.btn-primary:hover { background: linear-gradient(180deg, var(--gold), #c68f34); }
+.btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary:disabled:active { transform: none; }
+.btn-ghost {
+  background: rgba(233,217,172,0.05);
+  color: var(--parchment);
+  border: 3px solid rgba(233,217,172,0.4);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.45);
+}
+.btn-ghost:hover { background: rgba(233,217,172,0.12); }
+.btn-gold {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: var(--ink);
+  box-shadow: 5px 5px 0 var(--wood-dark);
+}
+.btn-sm { padding: 10px 16px; font-size: 11px; }
+
+/* ---------- banners (section headers) ---------- */
+.banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px 10px 14px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold-bright);
+  margin-bottom: 22px;
+  border: 1px solid rgba(217,165,68,0.3);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+}
+.banner .skull { font-size: 14px; }
+.banner--green {
+  background: linear-gradient(180deg, var(--gob-green-dark), #2f4416);
+  color: var(--parchment);
+}
+.banner--plum {
+  background: linear-gradient(180deg, var(--wine), var(--wine-dark));
+  color: var(--parchment);
+}
+.banner--ink {
+  background: linear-gradient(180deg, var(--wood), var(--wood-dark));
+}
+
+/* ---------- doodles & torches ---------- */
+.torch-flame {
+  position: absolute;
+  pointer-events: none;
+  width: 18px;
+  height: 40px;
+  background: radial-gradient(circle at 50% 25%, var(--gold-bright) 0%, var(--gold) 35%, var(--rust) 65%, transparent 75%);
+  filter: blur(1.5px);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 2.4s ease-in-out infinite;
+  box-shadow: 0 0 22px 6px rgba(244,197,103,0.35);
+}
+@keyframes flicker {
+  0%,100% { transform: scaleY(1) scaleX(1) rotate(-1deg); opacity: 1; }
+  35% { transform: scaleY(0.92) scaleX(1.04) rotate(1deg); opacity: 0.88; }
+  60% { transform: scaleY(1.06) scaleX(0.96) rotate(-2deg); opacity: 0.95; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .torch-flame { animation: none; }
+}
+
+/* ---------- pixel corners ---------- */
+.pixel-corners {
+  clip-path: polygon(
+    0 8px, 8px 8px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+.pixel-corners-sm {
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+  );
 }
 
 /* Custom retro scrollbar */
@@ -33,23 +328,19 @@
   width: 10px;
   height: 10px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #18181b;
+  background: #0E0A06;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #3f6a2e;
-  border: 2px solid #18181b;
+  background: #5C3D22;
+  border: 2px solid #0E0A06;
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #538d3d;
+  background: #7FA83E;
+}
+::selection {
+  background-color: #D9A544;
+  color: #0E0A06;
 }
 
-/* Custom selection */
-::selection {
-  background-color: #f5b82e;
-  color: #121214;
-}

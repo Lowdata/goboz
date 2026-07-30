@@ -12,11 +12,11 @@ export const RewardTiers: React.FC = () => {
   return (
     <section className="w-full max-w-5xl mx-auto my-12 px-4">
       <div className="text-center mb-8">
-        <h2 className="font-pixel text-2xl sm:text-3xl text-parchment-100 tracking-wider mb-2">
+        <div className="banner banner--ink">
+          <span className="skull">💀</span> WHAT&apos;S IN THE MACHINE
+        </div>
+        <p className="font-mono text-xs text-parchment-dim uppercase tracking-widest mt-1">
           REWARD TIERS
-        </h2>
-        <p className="font-pixel text-sm text-stone-400 uppercase tracking-widest">
-          WHAT&apos;S IN THE MACHINE
         </p>
       </div>
 

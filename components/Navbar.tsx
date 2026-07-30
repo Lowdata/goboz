@@ -28,14 +28,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
         {/* Logo & Tagline */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-amber-500 rounded-lg border-2 border-amber-300 flex items-center justify-center shadow-lg transform -rotate-2">
-            <span className="font-pixel text-2xl text-stone-950">G</span>
-          </div>
           <div>
-            <h1 className="font-pixel text-xl sm:text-2xl text-parchment-100 tracking-wider">
-              GOBBOZ
-            </h1>
-            <p className="font-pixel text-[10px] text-amber-400 uppercase tracking-widest">
+            <div className="brand">
+              <span className="skull">💀</span>
+              <span>GOBBO</span>
+              <span className="z">Z</span>
+            </div>
+            <p className="font-mono text-[10px] text-parchment-dim uppercase tracking-widest mt-0.5">
               WE GIB. WE GRIB. WE GOBBOZ.
             </p>
           </div>

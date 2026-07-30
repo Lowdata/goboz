@@ -19,12 +19,12 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="max-w-5xl mx-auto px-4 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full mb-4">
           <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="font-pixel text-xs text-amber-400 tracking-wider">
+          <span className="font-mono text-xs text-amber-400 tracking-wider">
             DONT SLEEP ON DA SHINIES
           </span>
         </div>
 
-        <h2 className="font-pixel text-2xl sm:text-4xl text-parchment-100 tracking-wider mb-3 max-w-2xl mx-auto leading-tight">
+        <h2 className="font-heading text-2xl sm:text-4xl text-parchment-100 tracking-wider mb-3 max-w-2xl mx-auto leading-tight">
           THE MACHINE DOESN&apos;T CARE IF YOU&apos;RE LUCKY. IT CARES IF YOU PULL.
         </h2>
 
@@ -35,7 +35,7 @@ export const Footer: React.FC<FooterProps> = ({
         {userState.isConnected ? (
           <button
             onClick={onScrollToMachine}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-pixel text-sm tracking-widest uppercase rounded-xl shadow-2xl shadow-amber-500/25 transition-all transform hover:-translate-y-1"
+            className="btn btn-primary"
           >
             <Play className="w-5 h-5 fill-current" />
             <span>YANK THE LEVER NOW ({userState.pullsRemaining} PULLS LEFT)</span>
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
         ) : (
           <button
             onClick={onOpenConnectModal}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-stone-950 font-pixel text-sm tracking-widest uppercase rounded-xl shadow-2xl shadow-amber-500/25 transition-all transform hover:-translate-y-1"
+            className="btn btn-primary"
           >
             <Play className="w-5 h-5 fill-current" />
             <span>CONNECT WALLET &amp; PULL</span>
@@ -56,13 +56,13 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skull className="w-5 h-5 text-amber-500" />
-            <span className="font-pixel text-xs text-parchment-200 tracking-wider">
-              GIB SHINY. KRUMP HUMIES. JOIN DA TRIBE.
+            <span className="font-logo text-sm text-parchment-200 tracking-wider">
+              GIB SHINY. KRUMP HUMIES. JOIN DA TRIBE. 💀
             </span>
           </div>
 
-          <div className="flex items-center gap-6 text-xs font-pixel text-stone-500">
-            <a href="https://twitter.com/Gobboz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">
+          <div className="flex items-center gap-6 text-xs font-mono text-stone-500">
+            <a href="https://x.com/gobbozhq" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">
               TWITTER / X
             </a>
             <a href="https://discord.gg/gobboz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">

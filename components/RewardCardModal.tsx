@@ -150,7 +150,7 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
 
   const handleShareToX = () => {
     const symbolsText = result.symbols.map((s) => SYMBOLS[s].emoji).join(' ');
-    const tweetText = `Just pulled the @Gobboz lever and landed: ${symbolsText} (${tier.title})!\n\n${tier.description}\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ. 💀🗡️\n\n#Gobboz #NFT #Allowlist`;
+    const tweetText = `Just pulled the @GobbozHQ lever and landed: ${symbolsText} (${tier.title})!\n\n${tier.description}\n\nPull the Lever. Loot the List. WE GIB. WE GRIB. WE GOBBOZ. 💀🗡️\n\n#Gobboz #NFT #Allowlist`;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
     window.open(shareUrl, '_blank');

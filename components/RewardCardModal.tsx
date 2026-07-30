@@ -176,7 +176,12 @@ export const RewardCardModal: React.FC<RewardCardModalProps> = ({
         </div>
 
         {/* Buttons Container */}
-          <div className="w-full flex flex-row md:flex-col items-center md:items-start justify-center md:justify-center gap-4 md:max-w-xs mt-6 md:mt-0">
+          <div className="w-full flex flex-col items-center md:items-start justify-center gap-4 md:max-w-xs mt-6 md:mt-0">
+            {result.tierId !== 'no_match' && (
+              <div className="text-center md:text-left font-pixel text-xs sm:text-sm text-[#FACC15] animate-pulse drop-shadow-md">
+                POST YOUR CARD ON X TO CLAIM YOUR SPOT 👇
+              </div>
+            )}
             <div className="flex flex-row gap-4">
               <button
                 onClick={handleShareToX}

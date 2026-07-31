@@ -16,7 +16,7 @@ export async function GET() {
       }
     }
 
-    const tasks = await Task.find({}).sort({ createdAt: 1 });
+    const tasks = await Task.find({}).sort({ createdAt: 1 }).select('-_id -__v -createdAt -updatedAt').lean();
     return NextResponse.json(tasks);
   } catch {
     console.error('Error fetching tasks from DB.');

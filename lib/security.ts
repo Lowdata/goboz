@@ -67,13 +67,13 @@ export function assertSameOrigin(request: NextRequest): boolean {
   }
 }
 
-export function publicUser(user: { walletAddress: string; twitter: string; pullsLeft: number; referralCode: string; referredUsers: string[]; completedTasks: string[]; rewards: unknown[] }) {
+export function publicUser(user: { walletAddress: string; twitter: string; pullsLeft: number; referralCode: string; referredUsers?: string[]; completedTasks: string[]; rewards: unknown[] }) {
   return {
     walletAddress: user.walletAddress,
     twitter: user.twitter,
     pullsLeft: user.pullsLeft,
     referralCode: user.referralCode,
-    referredUsers: user.referredUsers,
+    referralCount: user.referredUsers ? user.referredUsers.length : 0,
     completedTasks: user.completedTasks,
     rewards: user.rewards
   };

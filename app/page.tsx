@@ -110,7 +110,7 @@ export default function GobbozHomePage() {
     pullsLeft?: number;
     pullsRemaining?: number;
     referralCode?: string;
-    referredUsers?: string[];
+    referralCount?: number;
     completedTasks?: string[] | Record<string, boolean>;
   }
 
@@ -143,7 +143,7 @@ export default function GobbozHomePage() {
             ? userData.pullsRemaining
             : prev.pullsRemaining,
         referralCode: userData.referralCode || prev.referralCode,
-        referredUsers: userData.referredUsers || prev.referredUsers,
+        referralCount: userData.referralCount !== undefined ? userData.referralCount : prev.referralCount,
         completedTasks: Object.keys(tasksObj).length > 0 ? tasksObj : prev.completedTasks
       };
     });

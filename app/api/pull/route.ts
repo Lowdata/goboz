@@ -69,17 +69,17 @@ export async function POST(request: NextRequest) {
     const rand = randomInt(10_000) / 100;
 
     // Weighted RNG: every pull is independent.
-    if (rand < 10) {
-        // 10% Triple Gem Jackpot
+    if (rand < 20) {
+        // 20% Triple Gem Jackpot
         tierId = 'triple_gem';
         symbols = ['gem', 'gem', 'gem'];
       } else if (rand < 40) {
-        // 30% Guaranteed WL (3-of-a-kind non-gem)
+        // 20% Guaranteed WL (3-of-a-kind non-gem)
         const sym = getRandomItem(NON_GEM_SYMBOLS);
         tierId = 'guaranteed_wl';
         symbols = [sym, sym, sym];
-      } else if (rand < 90) {
-        // 50% 2-of-a-kind FCFS
+      } else if (rand < 75) {
+        // 35% 2-of-a-kind FCFS
         const pairSym = getRandomItem(ALL_SYMBOLS);
         const otherSymbols = ALL_SYMBOLS.filter((s) => s !== pairSym);
         const thirdSym = getRandomItem(otherSymbols);
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
         tierId = 'fcfs_raffle';
         symbols = result;
     } else {
-        // 10% No match (3 different symbols)
+        // 25% No match (3 different symbols)
         const s1 = getRandomItem(ALL_SYMBOLS);
         let s2 = getRandomItem(ALL_SYMBOLS);
         while (s2 === s1) {

@@ -4,20 +4,12 @@ import { isAddress, verifyMessage } from 'viem';
 import { connectDB } from '@/lib/db';
 import { AuthChallenge } from '@/models/AuthChallenge';
 import { User } from '@/models/User';
-import { assertSameOrigin, publicUser, setSession } from '@/lib/security';
+import { assertSameOrigin, setSession } from '@/lib/security';
 
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 
 function messageFor(address: string, nonce: string) {
   return `Sign in to Gobboz.\nWallet: ${address}\nNonce: ${nonce}`;
-}
-
-async function createReferralCode() {
-  let code = '';
-  do {
-    code = `GOB-${randomBytes(5).toString('hex').toUpperCase()}`;
-  } while (await User.exists({ referralCode: code }));
-  return code;
 }
 
 export async function POST(request: NextRequest) {
@@ -51,24 +43,28 @@ export async function PUT(request: NextRequest) {
     const address = walletAddress.toLowerCase();
     await connectDB();
 
+    // Verify the wallet signature — no bypasses allowed.
     const challenge = await AuthChallenge.findOneAndDelete({ walletAddress: address, expiresAt: { $gt: new Date() } });
-    if (!challenge || !(await verifyMessage({ address: address as `0x${string}`, message: messageFor(address, challenge.nonce), signature: signature as `0x${string}` }))) {
+    if (!challenge) {
+      return NextResponse.json({ error: 'No active challenge found. Request a new sign-in message.' }, { status: 401 });
+    }
+    const valid = await verifyMessage({
+      address: address as `0x${string}`,
+      message: messageFor(address, challenge.nonce),
+      signature: signature as `0x${string}`
+    }).catch(() => false);
+    if (!valid) {
       return NextResponse.json({ error: 'Wallet signature could not be verified.' }, { status: 401 });
     }
 
-    let isExistingUser = false;
-    let user = await User.findOne({ walletAddress: address });
-    if (user) {
-      isExistingUser = true;
-    } else {
-      user = await User.create({ 
-        walletAddress: address, 
-        referralCode: await createReferralCode(), 
-        completedTasks: ['connect_wallet'],
-        pullsLeft: 1
-      });
-    }
-    const response = NextResponse.json({ ...publicUser(user), isExistingUser });
+    // Issue session cookie. DB user record is created later when the user
+    // submits their Twitter handle (PUT /api/user). This prevents wallet-only
+    // spam accounts from polluting the users collection.
+    const existingUser = await User.findOne({ walletAddress: address }).lean();
+    const response = NextResponse.json({
+      verified: true,
+      registered: !!existingUser  // tells the frontend whether to show the Twitter onboarding step
+    });
     setSession(response, address);
     return response;
   } catch {

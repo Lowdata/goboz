@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { User } from '@/models/User';
@@ -23,13 +24,22 @@ function normalizeTwitterHandle(value: string): string | null {
   return TWITTER_HANDLE.test(handle) ? `@${handle}` : null;
 }
 
+async function createReferralCode(): Promise<string> {
+  let code = '';
+  do {
+    code = `GOB-${randomBytes(5).toString('hex').toUpperCase()}`;
+  } while (await User.exists({ referralCode: code }));
+  return code;
+}
+
 export async function GET(request: NextRequest) {
   const walletAddress = getAuthenticatedWallet(request);
   if (!walletAddress) return NextResponse.json({ error: 'Wallet authentication required.' }, { status: 401 });
   try {
     await connectDB();
     const user = await User.findOne({ walletAddress });
-    if (!user) return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+    // Wallet is authenticated (valid session) but has not completed registration yet.
+    if (!user) return NextResponse.json({ registered: false });
     return NextResponse.json(publicUser(user));
   } catch {
     return NextResponse.json({ error: 'Unable to load user.' }, { status: 500 });
@@ -54,10 +64,30 @@ export async function PUT(request: NextRequest) {
     }
 
     await connectDB();
-    const user = await User.findOne({ walletAddress });
-    if (!user) return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+    let user = await User.findOne({ walletAddress });
 
-    if (typeof normalizedTwitter === 'string') user.twitter = normalizedTwitter;
+    if (!user) {
+      // Deferred registration: first time the user hits this endpoint after signing.
+      // We require a Twitter handle to create the account.
+      if (!normalizedTwitter) {
+        return NextResponse.json(
+          { error: 'TWITTER_REQUIRED', message: 'A Twitter handle is required to complete registration.' },
+          { status: 400 }
+        );
+      }
+      user = await User.create({
+        walletAddress,
+        twitter: normalizedTwitter,
+        referralCode: await createReferralCode(),
+        completedTasks: ['connect_wallet'],
+        pullsLeft: 1,
+      });
+    } else {
+      // Existing user — update twitter if provided.
+      if (typeof normalizedTwitter === 'string' && normalizedTwitter) {
+        user.twitter = normalizedTwitter;
+      }
+    }
 
     if (typeof inviteCode === 'string' && inviteCode.trim()) {
       if (user.referredBy) return NextResponse.json({ error: 'A referral code has already been applied.' }, { status: 400 });

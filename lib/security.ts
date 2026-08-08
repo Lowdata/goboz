@@ -56,8 +56,15 @@ export function getAuthenticatedWallet(request: NextRequest): string | null {
 }
 
 export function assertSameOrigin(request: NextRequest): boolean {
+  const method = request.method.toUpperCase();
+  const isMutating = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
   const origin = request.headers.get('origin');
-  if (!origin) return true;
+
+  // Browsers always include an Origin header on cross-origin mutating requests.
+  // If it's absent on a mutating method, the request is coming from a non-browser
+  // client (e.g. curl) which we do not want to allow on state-changing endpoints.
+  if (!origin) return !isMutating;
+
   const host = request.headers.get('host');
   try {
     const originHost = new URL(origin).host;
@@ -66,6 +73,7 @@ export function assertSameOrigin(request: NextRequest): boolean {
     return false;
   }
 }
+
 
 export function publicUser(user: { walletAddress: string; twitter: string; pullsLeft: number; referralCode: string; referredUsers?: string[]; completedTasks: string[]; rewards: unknown[] }) {
   return {

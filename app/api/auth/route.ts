@@ -51,12 +51,9 @@ export async function PUT(request: NextRequest) {
     const address = walletAddress.toLowerCase();
     await connectDB();
 
-    const isDemo = signature === 'DEMO_SIGNATURE' || signature === 'BYPASS_SIGNATURE';
-    if (!isDemo) {
-      const challenge = await AuthChallenge.findOneAndDelete({ walletAddress: address, expiresAt: { $gt: new Date() } });
-      if (!challenge || !(await verifyMessage({ address: address as `0x${string}`, message: messageFor(address, challenge.nonce), signature: signature as `0x${string}` }))) {
-        return NextResponse.json({ error: 'Wallet signature could not be verified.' }, { status: 401 });
-      }
+    const challenge = await AuthChallenge.findOneAndDelete({ walletAddress: address, expiresAt: { $gt: new Date() } });
+    if (!challenge || !(await verifyMessage({ address: address as `0x${string}`, message: messageFor(address, challenge.nonce), signature: signature as `0x${string}` }))) {
+      return NextResponse.json({ error: 'Wallet signature could not be verified.' }, { status: 401 });
     }
 
     let isExistingUser = false;
